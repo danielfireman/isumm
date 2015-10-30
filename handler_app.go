@@ -8,7 +8,7 @@ import (
 	"appengine/user"
 )
 
-var appTemplate = template.Must(template.ParseFiles("static/app.template"))
+var appTemplate = template.Must(template.ParseFiles("static/app.template.html"))
 
 type appParams struct {
 	User      string

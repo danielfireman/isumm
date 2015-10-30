@@ -11,12 +11,12 @@ import (
 
 func IsUserAllowed(u *user.User) bool {
 	if os.Getenv("RUN_WITH_DEVAPPSERVER") == "1" {
-		return u.String() == AllowedTestUser
+		return u.Email == AllowedTestUser
 	}
-	return u.String() == AllowedUser
+	return u.Email == AllowedUser
 }
 
-var notAllowedTemplate = template.Must(template.ParseFiles("static/not_allowed.template"))
+var notAllowedTemplate = template.Must(template.ParseFiles("static/not_allowed.template.html"))
 
 type notAllowedParams struct {
 	User      string
