@@ -1,0 +1,37 @@
+<!--
+-- Parameters
+-- .User
+-- .LogoutUrl
+-->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="static/app.css">
+		<link rel="stylesheet" href="static/default_font.css">
+	</head>
+	<body>
+  		<h1>Welcome {{.User}}!</h1>
+		<div id="op" class="action">
+			<b>Operation</b>
+			<form action="op">
+				Type:<select id=type>
+					<option value="b">Balance</option>
+					<option value="d">Deposit</option>
+					<option value="w">Withdrawal</option>
+				</select><br>
+				Investiment:<select><option value="foo">Foo Inv</option></select><br>
+				Value:<input type="text" name="iValue"><br>
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+		<div id="investiment" class="action">
+			<b>New Investiment</b>
+			<form action="inv">
+			    Edit:<select><option value="foo">Select to edit</option></select><br>
+				Name:<input type="text" name="iName"><br>
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+		<p><a href={{.LogoutUrl}}>Logout</a></p>
+	</body>
+</html>

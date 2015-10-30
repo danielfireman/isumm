@@ -1,0 +1,15 @@
+<!--
+-- Parameters
+-- .LogoutUrl : url to send to the user to logout
+-- .User: containing the user identification.
+-->
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="static/default_font.css">
+	</head>
+	<body>
+    	<h1>Sorry! User {{.User}} is not allowed</h1>
+		<p>Please <a href={{.LogoutUrl}}>logout</a> and login as an allowed user.</p>
+	</body>
+</html>
