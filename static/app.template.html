@@ -12,21 +12,21 @@
 	</head>
 	<body>
   		<h1>Welcome {{.User}}!</h1>
-		<div id="op" class="op">
+		<div id="opDiv" class="op">
 			<b>Operation</b>
-			<form action="op" form="op">
-				Type:<select id=type>
-					<option value="b">Balance</option>
+			<form id="opForm" action="op" method="post">
+				Type:<select name="type" form="opForm">
+					<option value="b" selected>Balance</option>
 					<option value="d">Deposit</option>
 					<option value="w">Withdrawal</option>
 				</select><br>
-				Investiment:<select name="inv" id="inv">
-					<option value="foo">Please select</option>
+				Investiment:<select name="inv" form="opForm">
+					<option value="">Please select</option>
 					{{range .Investments}}
 						<option value="{{.Key}}">{{.Name}}</option>
 					{{end}}
 				</select><br>
-				Value:<input type="text" name="iValue"><br>
+				Value:<input type="text" name="value"><br>
 				<input type="submit" value="Submit">
 			</form>
 		</div>
