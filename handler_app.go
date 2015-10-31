@@ -11,8 +11,9 @@ import (
 var appTemplate = template.Must(template.ParseFiles("static/app.template.html"))
 
 type appParams struct {
-	User      string
-	LogoutUrl string
+	User        string
+	LogoutUrl   string
+	Investments []*Investment
 }
 
 func App(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +30,12 @@ func App(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html")
-	if err := appTemplate.Execute(w, appParams{u.String(), logoutUrl}); err != nil {
+	i, err := GetInvestments(c)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if err := appTemplate.Execute(w, appParams{u.String(), logoutUrl, i}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
