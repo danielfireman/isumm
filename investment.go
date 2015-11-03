@@ -1,26 +1,18 @@
 package isumm
 
 import (
-	"time"
-
 	"appengine"
 	"appengine/datastore"
 )
 
 const (
-	opEntityName         = "Operation"
 	investmentEntityName = "Investment"
 )
 
-type Operation struct {
-	Value       float32    `datastore:"value,noindex"`
-	Date        time.Time  `datastore:"date`
-	Investiment Investment `datastore:"investment"`
-}
-
 type Investment struct {
-	Key  string `datastore:"-"`
-	Name string `datastore:"name"`
+	Key  string      `datastore:"-"`
+	Name string      `datastore:"name"`
+	Ops  []Operation `datastore:"ops"`
 }
 
 func investmentKey(c appengine.Context) *datastore.Key {
@@ -40,6 +32,18 @@ func PutInvestment(c appengine.Context, i *Investment) error {
 	}
 	_, err := datastore.Put(c, k, i)
 	return err
+}
+
+func GetInvestment(c appengine.Context, key string) (*Investment, error) {
+	k, err := datastore.DecodeKey(key)
+	if err != nil {
+		return nil, err
+	}
+	var i Investment
+	if err := datastore.Get(c, k, &i); err != nil {
+		return &i, err
+	}
+	return &i, nil
 }
 
 func GetInvestments(c appengine.Context) ([]*Investment, error) {

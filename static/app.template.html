@@ -16,9 +16,9 @@
 			<b>Operation</b>
 			<form id="opForm" action="op" method="post">
 				Type:<select name="type" form="opForm">
-					<option value="b" selected>Balance</option>
-					<option value="d">Deposit</option>
-					<option value="w">Withdrawal</option>
+					<option value="1" selected>Balance</option>
+					<option value="2">Deposit</option>
+					<option value="3">Withdrawal</option>
 				</select><br>
 				Investiment:<select name="inv" form="opForm">
 					<option value="">Please select</option>
@@ -27,6 +27,7 @@
 					{{end}}
 				</select><br>
 				Value:<input type="text" name="value"><br>
+				Date:<input type="date" name="date"><br>
 				<input type="submit" value="Submit">
 			</form>
 		</div>
@@ -42,6 +43,21 @@
 				Name:<input type="text" name="name"><br>
 				<input type="submit" value="Submit">
 			</form>
+		</div>
+		<div>
+			<table>
+				{{range .Investments}}
+					{{if .Ops}}
+						Investment: {{.Name}}<br>
+						<ul>
+							{{range .Ops}}
+								<li><span>{{.Date.Format "2006-01-02"}}</span>||<span>{{.Type}}</span>||<span>{{.Value}}</span>
+							{{end}}
+							<br>
+						</ul>
+					{{end}}
+				{{end}}
+			</table>
 		</div>
 		<p><a href={{.LogoutUrl}}>Logout</a></p>
 	</body>
