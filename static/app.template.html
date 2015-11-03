@@ -46,26 +46,26 @@
 		</div>
 		<div>
 			<table>
-				{{range .Investments}}
-					{{ $invKey := .Key}}
+				{{range $inv := .Investments}}
 					<ul>
 					<li>
 						<form name="delInv" method="post" action="inv">
-							<input type="hidden" name="key" value="{{$invKey}}">
+							<input type="hidden" name="key" value="{{$inv.Key}}">
 							<input type="hidden" value="d" name="action">
 							<input type="submit" value="-">
 						</form>
 						Investment: {{.Name}}
 					</li>
 					<ul>
-						{{range .Ops}}
+						{{range $index, $op := .Ops}}
 							<li>
 							<form name="delOp" method="post" action="op">
-								<input type="hidden" name="key" value="{{$invKey}}">
+								<input type="hidden" name="inv" value="{{$inv.Key}}">
 								<input type="hidden" value="d" name="action">
+								<input type="hidden" value="{{$index}}" name="index">
 								<input type="submit" value="-">
 							</form>
-							<span>{{.Date.Format "2006-01-02"}}</span>||<span>{{.Type}}</span>||<span>{{.Value}}</span>
+							<span>{{$op.Date.Format "2006-01-02"}}</span>||<span>{{$op.Type}}</span>||<span>{{$op.Value}}</span>
 							</li>
 						{{end}}
 					</ul> <!-- operations -->

@@ -40,6 +40,7 @@ func GetInvestment(c appengine.Context, key string) (*Investment, error) {
 		return nil, err
 	}
 	var i Investment
+	i.Key = key
 	if err := datastore.Get(c, k, &i); err != nil {
 		return &i, err
 	}
