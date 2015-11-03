@@ -46,6 +46,14 @@ func GetInvestment(c appengine.Context, key string) (*Investment, error) {
 	return &i, nil
 }
 
+func DeleteInvestment(c appengine.Context, key string) error {
+	k, err := datastore.DecodeKey(key)
+	if err != nil {
+		return err
+	}
+	return datastore.Delete(c, k)
+}
+
 func GetInvestments(c appengine.Context) ([]*Investment, error) {
 	// Ancestor queries, as shown here, are strongly consistent with the High
 	// Replication Datastore. Queries that span entity groups are eventually
