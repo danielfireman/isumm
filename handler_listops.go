@@ -7,15 +7,15 @@ import (
 	"appengine"
 )
 
-var delOpTemplate = template.Must(template.ParseFiles("static/delop.template.html"))
+var listOpsTemplate = template.Must(template.ParseFiles("static/listops.template.html"))
 
-type delOpParams struct {
+type listOpsParams struct {
 	InvKey  string
 	InvName string
 	Ops     Operations
 }
 
-func DelOp(w http.ResponseWriter, r *http.Request) {
+func ListOps(w http.ResponseWriter, r *http.Request) {
 	invStr := r.FormValue("inv")
 	if invStr == "" {
 		http.Error(w, "Investment key can not be empty.", http.StatusPreconditionFailed)
@@ -28,7 +28,7 @@ func DelOp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/html")
-	if err := delOpTemplate.Execute(w, delOpParams{inv.Key, inv.Name, inv.Ops}); err != nil {
+	if err := listOpsTemplate.Execute(w, listOpsParams{inv.Key, inv.Name, inv.Ops}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

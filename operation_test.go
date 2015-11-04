@@ -49,6 +49,13 @@ func TestSummarize(t *testing.T) {
 			ops:  Operations{{Date: now, Value: 1.0, Type: Deposit}},
 			summ: MonthlySummary{MonthKey{now.Month(), now.Year()}: {Balance: 0, Change: 1.0}},
 		},
+		{ // Two balances --> Use the most recent.
+			ops: Operations{
+				{Date: now.Add(incMin), Value: 1.2, Type: Balance},
+				{Date: now, Value: 2.2, Type: Balance},
+			},
+			summ: MonthlySummary{MonthKey{now.Month(), now.Year()}: {Balance: 1.2, Change: 0}},
+		},
 	}
 	for _, d := range data {
 		got := d.ops.Summarize()

@@ -100,7 +100,12 @@ func (ops Operations) Summarize() MonthlySummary {
 		case Deposit:
 			summ.Change += op.Value
 		case Balance:
-			summ.Balance = op.Value
+			// This enforces the case when we have more than one balance, the
+			// system will use the most recent. This is easier than change
+			// loads of places to make sure enforce only one balance.
+			if summ.Balance == 0 {
+				summ.Balance = op.Value
+			}
 		}
 	}
 	// We must not forget the latest summary.

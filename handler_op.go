@@ -57,14 +57,6 @@ func Op(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, fmt.Sprintf("Invalid operation date: %s", strDate), http.StatusPreconditionFailed)
 			return
 		}
-		if opType == Balance {
-			for _, o := range inv.Ops.FilterMonth(date.Month(), date.Year()) {
-				if o.Type == Balance {
-					http.Error(w, fmt.Sprintf("There must be only one balance. Month:%v Year:%v", date.Month(), date.Year()), http.StatusPreconditionFailed)
-					return
-				}
-			}
-		}
 		inv.Ops = append(inv.Ops, Operation{Date: date, Value: float32(value), Type: OpType(opType)})
 		sort.Sort(inv.Ops)
 	}

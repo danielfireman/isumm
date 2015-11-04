@@ -41,16 +41,16 @@
 			<input type="submit" name="action" value="Delete">
 			</form>
 		</div>
-		<div id="delOpDiv" class="op">
-			<b>Delete Operation</b>
-			<form id="delOpForm" action="delop" method="post">
+		<div id="listOpDiv" class="op">
+			<b>List Operations</b>
+			<form id="listOpForm" action="listops" method="post">
 				Investiment:<select name="inv">
 					<option value="">Please select</option>
 					{{range .Investments}}
 						<option value="{{.Key}}">{{.Name}}</option>
 					{{end}}
 				</select><br>
-				<input type="submit" name="action" value="Delete">
+				<input type="submit" name="action" value="List">
 			</form>
 		</div>
 		<div id="summDiv">
