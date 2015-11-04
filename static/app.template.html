@@ -8,23 +8,23 @@
 	</head>
 	<body>
   		<h1>Welcome {{.User}}!</h1>
-		<div id="opDiv" class="op">
-			<b>Operation</b>
-			<form id="opForm" action="op" method="post">
-				Type:<select name="type" form="opForm">
+		<div id="addOpDiv" class="op">
+			<b>Add Operation</b>
+			<form id="addOpForm" action="op" method="post">
+				Type:<select name="type">
 					<option value="1" selected>Balance</option>
 					<option value="2">Deposit</option>
 					<option value="3">Withdrawal</option>
 				</select><br>
-				Investiment:<select name="inv" form="opForm">
+				Investiment:<select name="inv">
 					<option value="">Please select</option>
 					{{range .Investments}}
 						<option value="{{.Key}}">{{.Name}}</option>
 					{{end}}
 				</select><br>
-				Value:<input type="text" name="value"><br>
+				Value:<input type="text" name="value" size="10"><br>
 				Date:<input type="date" name="date"><br>
-				<input type="submit" value="Submit">
+				<input type="submit" name="action" value="Add">
 			</form>
 		</div>
 		<div id="invDiv" class="op">
@@ -36,9 +36,21 @@
 					<option value="{{.Key}}">{{.Name}}</option>
 				{{end}}
 			</select><br>
-			Name:<input type="text" name="name"><br>
+			Name:<input type="text" name="name" size="15"><br>
 			<input type="submit" name="action" value="New/Edit">			
 			<input type="submit" name="action" value="Delete">
+			</form>
+		</div>
+		<div id="delOpDiv" class="op">
+			<b>Delete Operation</b>
+			<form id="delOpForm" action="delop" method="post">
+				Investiment:<select name="inv">
+					<option value="">Please select</option>
+					{{range .Investments}}
+						<option value="{{.Key}}">{{.Name}}</option>
+					{{end}}
+				</select><br>
+				<input type="submit" name="action" value="Delete">
 			</form>
 		</div>
 		<div id="summDiv">

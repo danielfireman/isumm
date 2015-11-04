@@ -24,3 +24,7 @@ handlers:
 - url: /op
   script: _go_app
   login: required
+
+- url: /delop
+  script: _go_app
+  login: required

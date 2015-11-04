@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="static/default_font.css">
+	</head>
+	<body>
+  		<h1>Delete Operations for {{.InvName}}</h1>
+		{{$key := .InvKey}}
+		{{range $index, $op := .Ops}}
+			<span>
+			<ul>
+				<form name="delOp" method="post" action="op">
+					<input type="hidden" name="inv" value="{{$key}}">
+					<input type="hidden" value="d" name="action">
+					<input type="hidden" value="{{$index}}" name="index">
+					<input type="submit" value="-">
+					{{$op.Date.Format "2006-01-02"}}</span>||<span>{{$op.Type}}</span>||<span>{{$op.Value}}</span>
+				</form>
+				</span>
+			</ul>
+		{{end}}
+		<a href="/app">Back</a>
+	</body>
+</head>
