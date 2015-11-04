@@ -3,6 +3,7 @@ package isumm
 import (
 	"fmt"
 	"net/http"
+	"sort"
 	"text/template"
 
 	"appengine"
@@ -11,8 +12,20 @@ import (
 
 var appTemplate = template.Must(template.ParseFiles("static/app.template.html"))
 
+type monthlySummaries []*appMonthlySummary
+
+func (m monthlySummaries) Len() int      { return len(m) }
+func (m monthlySummaries) Swap(i, j int) { m[i], m[j] = m[j], m[i] }
+func (m monthlySummaries) Less(i, j int) bool {
+	if m[i].MonthKey.Year != m[j].MonthKey.Year {
+		return m[i].MonthKey.Year < m[j].MonthKey.Year
+	}
+	return m[i].MonthKey.Month < m[j].MonthKey.Month
+}
+
 type appMonthlySummary struct {
 	Header           string
+	MonthKey         MonthKey
 	MonthlySummaries []*appInvestmentSummary
 }
 
@@ -31,6 +44,7 @@ type appParams struct {
 	LogoutUrl    string
 	Investments  []appInvestment
 	AllSummaries []*appMonthlySummary
+	SummaryGraph []graphPoint
 }
 
 func App(w http.ResponseWriter, r *http.Request) {
@@ -53,6 +67,7 @@ func App(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// This is a way to present the summary in a month-by-month basis.
 	summ := make(map[MonthKey]*appMonthlySummary)
 	var appInvestments []appInvestment
 	for _, inv := range investments {
@@ -61,6 +76,7 @@ func App(w http.ResponseWriter, r *http.Request) {
 			s, ok := summ[mKey]
 			if !ok {
 				s = &appMonthlySummary{
+					MonthKey:         mKey,
 					Header:           fmt.Sprintf("%v/%v", mKey.Month, mKey.Year),
 					MonthlySummaries: make([]*appInvestmentSummary, 0),
 				}
@@ -70,11 +86,33 @@ func App(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var appMonthlySummaries []*appMonthlySummary
+	var appMonthlySummaries monthlySummaries
 	for _, v := range summ {
 		appMonthlySummaries = append(appMonthlySummaries, v)
 	}
-	if err := appTemplate.Execute(w, appParams{u.String(), logoutUrl, appInvestments, appMonthlySummaries}); err != nil {
+	sort.Sort(appMonthlySummaries)
+	if err := appTemplate.Execute(w, appParams{u.String(), logoutUrl, appInvestments, appMonthlySummaries, GraphSummary(appMonthlySummaries)}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+type graphPoint struct {
+	x int
+	y float32
+}
+
+func (g graphPoint) String() string {
+	return fmt.Sprintf("[%d, %.2f]", g.x, g.y)
+}
+
+func GraphSummary(summary monthlySummaries) []graphPoint {
+	var graph []graphPoint
+	for monthIndex, ms := range summary {
+		summ := float32(0)
+		for _, is := range ms.MonthlySummaries {
+			summ += is.Summary.Balance
+		}
+		graph = append(graph, graphPoint{monthIndex, summ})
+	}
+	return graph
 }
