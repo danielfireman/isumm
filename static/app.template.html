@@ -1,14 +1,10 @@
-<!--
--- Parameters
--- .User
--- .LogoutUrl
--- .Investments
--->
 <html>
 	<head>
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="static/app.css">
 		<link rel="stylesheet" href="static/default_font.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
 	</head>
 	<body>
   		<h1>Welcome {{.User}}!</h1>
@@ -32,46 +28,31 @@
 			</form>
 		</div>
 		<div id="invDiv" class="op">
-			<b>New Investiment</b>
+			<b>Investiments</b>
 			<form id="invForm" action="inv" method="post">
-			    Edit:<select name="key" form="invForm">
-					<option value="">Select to edit</option>
-					{{range .Investments}}
-						<option value="{{.Key}}">{{.Name}}</option>
-					{{end}}
-				</select><br>
-				Name:<input type="text" name="name"><br>
-				<input type="submit" value="Submit">
+		    Edit:<select name="key">
+				<option value="">Select to edit</option>
+				{{range .Investments}}
+					<option value="{{.Key}}">{{.Name}}</option>
+				{{end}}
+			</select><br>
+			Name:<input type="text" name="name"><br>
+			<input type="submit" name="action" value="New/Edit">			
+			<input type="submit" name="action" value="Delete">
 			</form>
 		</div>
-		<div>
-			<table>
-				{{range $inv := .Investments}}
+		<div id="summDiv">
+			<b>Summary</b>
+			{{range .AllSummaries}}
+				<ul>
+					<li>{{.Header}}</li>
 					<ul>
-					<li>
-						<form name="delInv" method="post" action="inv">
-							<input type="hidden" name="key" value="{{$inv.Key}}">
-							<input type="hidden" value="d" name="action">
-							<input type="submit" value="-">
-						</form>
-						Investment: {{.Name}}
-					</li>
-					<ul>
-						{{range $index, $op := .Ops}}
-							<li>
-							<form name="delOp" method="post" action="op">
-								<input type="hidden" name="inv" value="{{$inv.Key}}">
-								<input type="hidden" value="d" name="action">
-								<input type="hidden" value="{{$index}}" name="index">
-								<input type="submit" value="-">
-							</form>
-							<span>{{$op.Date.Format "2006-01-02"}}</span>||<span>{{$op.Type}}</span>||<span>{{$op.Value}}</span>
-							</li>
+						{{range $s := .MonthlySummaries}}
+						<li>{{$s.Investment}} : Balance:{{$s.Summary.Balance}} | Change:{{$s.Summary.Change}}
 						{{end}}
-					</ul> <!-- operations -->
-					</ul> <!-- Investments -->
-				{{end}}
-			</table>
+					</ul>
+				</ul>
+			{{end}}
 		</div>
 		<p><a href={{.LogoutUrl}}>Logout</a></p>
 	</body>

@@ -10,9 +10,9 @@ const (
 )
 
 type Investment struct {
-	Key  string      `datastore:"-"`
-	Name string      `datastore:"name"`
-	Ops  []Operation `datastore:"ops"`
+	Key  string     `datastore:"-"`
+	Name string     `datastore:"name"`
+	Ops  Operations `datastore:"ops"`
 }
 
 func investmentKey(c appengine.Context) *datastore.Key {

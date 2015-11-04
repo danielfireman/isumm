@@ -3,6 +3,7 @@ package isumm
 import (
 	"fmt"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
@@ -34,6 +35,12 @@ func Op(w http.ResponseWriter, r *http.Request) {
 		inv.Ops = append(inv.Ops[:index], inv.Ops[index+1:]...)
 
 	default:
+		strOpType := r.FormValue("type")
+		opType, err := strconv.Atoi(strOpType)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Invalid operation type: %s", strOpType), http.StatusPreconditionFailed)
+			return
+		}
 		strValue := r.FormValue("value")
 		if strValue == "" {
 			http.Error(w, "Value can not be empty.", http.StatusPreconditionFailed)
@@ -44,19 +51,22 @@ func Op(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, fmt.Sprintf("Invalid value: %s", strValue), http.StatusPreconditionFailed)
 			return
 		}
-		strOpType := r.FormValue("type")
-		opType, err := strconv.Atoi(strOpType)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Invalid operation type: %s", strOpType), http.StatusPreconditionFailed)
-			return
-		}
 		strDate := r.FormValue("date")
 		date, err := time.Parse("2006-01-02", strDate)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Invalid operation date: %s", strDate), http.StatusPreconditionFailed)
 			return
 		}
+		if opType == Balance {
+			for _, o := range inv.Ops.FilterMonth(date.Month(), date.Year()) {
+				if o.Type == Balance {
+					http.Error(w, fmt.Sprintf("There must be only one balance. Month:%v Year:%v", date.Month(), date.Year()), http.StatusPreconditionFailed)
+					return
+				}
+			}
+		}
 		inv.Ops = append(inv.Ops, Operation{Date: date, Value: float32(value), Type: OpType(opType)})
+		sort.Sort(inv.Ops)
 	}
 	if err := PutInvestment(c, inv); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

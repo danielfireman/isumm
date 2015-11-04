@@ -10,7 +10,7 @@ func Inv(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	action := r.FormValue("action")
 	switch action {
-	case "d":
+	case "Delete":
 		k := r.FormValue("key")
 		if k == "" {
 			http.Error(w, "Investment key can not be empty.", http.StatusPreconditionFailed)
