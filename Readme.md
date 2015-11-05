@@ -1,8 +1,12 @@
 # ISumm
 
-I created this project based on a personal need of having a summarized view of my investiments. The idea is to have a very simple manually record (monthly) balance, deposits or withdrawal and properly generates summary views of my investments.
+I created this project based on a personal need of having a summarized view of my investiments. The idea is to have manually record monthly operations (i.e. balance, deposits or withdrawal) and properly generates a simple summary views of investments.
 
-It requires google login and the medium term goal is to make it simple so a person could just git clone this reposity, change two configuration files and reploy it to app engine. In this way users will have their own servers and datastores.
+Main goals:
+
+* Simple: no crazy JS or animations. As much stuff done server side as possible
+* Super secure: users will have their own instance (app engine) of the whole app (include the complete datastore). The app will require google login and only one pre-configured user will have access to the instance
+* Open source: just because :D 
 
 ## Main concepts
 
