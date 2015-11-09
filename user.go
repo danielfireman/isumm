@@ -20,7 +20,7 @@ var notAllowedTemplate = template.Must(template.ParseFiles("static/not_allowed.t
 
 type notAllowedParams struct {
 	User      string
-	LogoutUrl string
+	LogoutURL string
 }
 
 func InvalidUserPage(c appengine.Context, w http.ResponseWriter, r *http.Request, u *user.User) {

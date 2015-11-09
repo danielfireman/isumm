@@ -41,7 +41,8 @@ type appInvestment struct {
 
 type appParams struct {
 	User         string
-	LogoutUrl    string
+	Currency     string
+	LogoutURL    string
 	Investments  []appInvestment
 	AllSummaries []*appMonthlySummary
 	SummaryGraph []graphPoint
@@ -91,7 +92,14 @@ func App(w http.ResponseWriter, r *http.Request) {
 		appMonthlySummaries = append(appMonthlySummaries, v)
 	}
 	sort.Sort(appMonthlySummaries)
-	if err := appTemplate.Execute(w, appParams{u.String(), logoutUrl, appInvestments, appMonthlySummaries, GraphSummary(appMonthlySummaries)}); err != nil {
+	params := appParams{
+		User:         u.String(),
+		Currency:     Currency,
+		LogoutURL:    logoutUrl,
+		Investments:  appInvestments,
+		AllSummaries: appMonthlySummaries,
+		SummaryGraph: GraphSummary(appMonthlySummaries)}
+	if err := appTemplate.Execute(w, params); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

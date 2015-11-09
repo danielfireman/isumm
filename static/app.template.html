@@ -7,6 +7,17 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
 		<script type="text/javascript">
+		function formatCurrency(n) {
+				nStr = '{{.Currency}} ' + n;
+				x = nStr.split('.');
+				x1 = x[0];
+				x2 = x.length > 1 ? '.' + x[1] : '';
+				var rgx = /(\d+)(\d{3})/;
+				while (rgx.test(x1)) {
+					x1 = x1.replace(rgx, '$1' + ',' + '$2');
+				}
+				return x1 + x2;
+			}
 			var data = [[{{range .SummaryGraph}}{{.}},{{end}}]]
 			var options = {
 				legend: {
@@ -16,7 +27,9 @@
 					min: 0,
 				},
 				yaxis: {
+					tickFormatter: formatCurrency,
 					min: 0,
+					
 				},
 			};
 			$(document).ready(function() {
@@ -79,7 +92,11 @@
 					<li>{{.Header}}</li>
 					<ul>
 						{{range $s := .MonthlySummaries}}
-						<li>{{$s.Investment}} : Balance:{{$s.Summary.Balance}} | Change:{{$s.Summary.Change}}
+						<script>
+							balance = formatCurrency({{$s.Summary.Balance}})
+							change = formatCurrency({{$s.Summary.Change}})
+							document.write("<li>{{$s.Investment}} : Balance:"+balance+" | Change:" + change)
+						</script>
 						{{end}}
 					</ul>
 				</ul>
