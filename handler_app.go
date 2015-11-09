@@ -73,7 +73,7 @@ func App(w http.ResponseWriter, r *http.Request) {
 	var appInvestments []appInvestment
 	for _, inv := range investments {
 		appInvestments = append(appInvestments, appInvestment{Key: inv.Key, Name: inv.Name})
-		for mKey, Sum := range inv.Ops.Summarize() {
+		for mKey, Sum := range Summarize(inv.Ops) {
 			s, ok := summ[mKey]
 			if !ok {
 				s = &appMonthlySummary{
