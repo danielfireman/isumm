@@ -19,7 +19,7 @@ func TestSummarize(t *testing.T) {
 	}{
 		{ // Simple case: One entry containing only balance.
 			ops:  Operations{{Date: now, Value: 1.2, Type: Balance}},
-			summ: MonthlySummary{MonthKey{now.Month(), now.Year()}: {Balance: 1.2, Change: 0}},
+			summ: MonthlySummary{{Date: monthYear(now), Balance: 1.2, Change: 0}},
 		},
 		{ // Empty case.
 			ops:  Operations{},
@@ -32,20 +32,20 @@ func TestSummarize(t *testing.T) {
 				{Date: nextMonth, Value: 2.2, Type: Balance},
 			},
 			summ: MonthlySummary{
-				MonthKey{nextMonth.Month(), nextMonth.Year()}: {Balance: 2.2, Change: 0},
-				MonthKey{now.Month(), now.Year()}:             {Balance: 1.2, Change: 1.0},
+				{Date: monthYear(nextMonth), Balance: 2.2, Change: 0},
+				{Date: monthYear(now), Balance: 1.2, Change: 1.0},
 			},
 		},
 		{ // Middle of the month, no balance.
 			ops:  Operations{{Date: now, Value: 1.0, Type: Deposit}},
-			summ: MonthlySummary{MonthKey{now.Month(), now.Year()}: {Balance: 0, Change: 1.0}},
+			summ: MonthlySummary{{Date: monthYear(now), Balance: 0, Change: 1.0}},
 		},
 		{ // Two balances --> Use the most recent.
 			ops: Operations{
 				{Date: now.Add(incMin), Value: 1.2, Type: Balance},
 				{Date: now, Value: 2.2, Type: Balance},
 			},
-			summ: MonthlySummary{MonthKey{now.Month(), now.Year()}: {Balance: 1.2, Change: 0}},
+			summ: MonthlySummary{{Date: monthYear(now), Balance: 1.2, Change: 0}},
 		},
 	}
 	for _, d := range data {

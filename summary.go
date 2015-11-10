@@ -6,6 +6,7 @@ import (
 )
 
 type Summary struct {
+	Date    time.Time
 	Balance float32
 	Change  float32
 }
@@ -15,28 +16,30 @@ func (s *Summary) Reset() {
 	s.Change = 0
 }
 
-type MonthKey struct {
-	Month time.Month
-	Year  int
-}
+type MonthlySummary []Summary
 
-type MonthlySummary map[MonthKey]Summary
+func (m MonthlySummary) Len() int           { return len(m) }
+func (m MonthlySummary) Swap(i, j int)      { m[i], m[j] = m[j], m[i] }
+func (m MonthlySummary) Less(i, j int) bool { return m[i].Date.After(m[j].Date) }
 
 func Summarize(ops Operations) MonthlySummary {
 	if !sort.IsSorted(ops) {
 		sort.Sort(ops)
 	}
-	returned := make(MonthlySummary)
+	var returned MonthlySummary
 	var summ Summary
-	var month time.Month
-	var year int
 	for i, op := range ops {
+		// If the month has changed (please notice that ops are sorted by
+		// month).
 		if i > 0 && ops[i-1].Date.Month() != op.Date.Month() {
-			returned[MonthKey{month, year}] = summ
+			returned = append(returned, summ)
 			summ.Reset()
 		}
-		month = op.Date.Month()
-		year = op.Date.Year()
+		// At this point we are only interested on the month/year pair and
+		// would like to enjoy the datetime goodies and format (flot and
+		// other libraries support it natively). So, setting the day to
+		// the first day of the month.
+		summ.Date = monthYear(op.Date)
 		switch op.Type {
 		case Withdrawal:
 			summ.Change -= op.Value
@@ -53,7 +56,11 @@ func Summarize(ops Operations) MonthlySummary {
 	}
 	// We must not forget the latest summary.
 	if len(ops) > 0 {
-		returned[MonthKey{month, year}] = summ
+		returned = append(returned, summ)
 	}
 	return returned
+}
+
+func monthYear(t time.Time) time.Time {
+	return time.Date(t.Year(), t.Month(), 01, 0, 0, 0, 0, t.Location())
 }

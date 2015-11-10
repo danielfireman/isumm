@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"sort"
 	"text/template"
+	"time"
 
 	"appengine"
 	"appengine/user"
@@ -12,40 +13,29 @@ import (
 
 var appTemplate = template.Must(template.ParseFiles("static/app.template.html"))
 
-type monthlySummaries []*appMonthlySummary
+// All information needed to render investment information.
+type appInvestments []appInvestment
 
-func (m monthlySummaries) Len() int      { return len(m) }
-func (m monthlySummaries) Swap(i, j int) { m[i], m[j] = m[j], m[i] }
-func (m monthlySummaries) Less(i, j int) bool {
-	if m[i].MonthKey.Year != m[j].MonthKey.Year {
-		return m[i].MonthKey.Year < m[j].MonthKey.Year
-	}
-	return m[i].MonthKey.Month < m[j].MonthKey.Month
-}
+func (m appInvestments) Len() int      { return len(m) }
+func (m appInvestments) Swap(i, j int) { m[i], m[j] = m[j], m[i] }
 
-type appMonthlySummary struct {
-	Header           string
-	MonthKey         MonthKey
-	MonthlySummaries []*appInvestmentSummary
-}
-
-type appInvestmentSummary struct {
-	Investment string
-	Summary    Summary
+// Sort investment lexicographically for rendering the summaries and ops
+// section.
+func (m appInvestments) Less(i, j int) bool {
+	return m[i].Investment.Name < m[j].Investment.Name
 }
 
 type appInvestment struct {
-	Key  string
-	Name string
+	Investment *Investment
+	Summary    MonthlySummary
 }
 
 type appParams struct {
 	User         string
 	Currency     string
 	LogoutURL    string
-	Investments  []appInvestment
-	AllSummaries []*appMonthlySummary
-	SummaryGraph []graphPoint
+	Investments  appInvestments
+	SummaryGraph []timeSeriesPoint
 }
 
 func App(w http.ResponseWriter, r *http.Request) {
@@ -68,59 +58,43 @@ func App(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// This is a way to present the summary in a month-by-month basis.
-	summ := make(map[MonthKey]*appMonthlySummary)
-	var appInvestments []appInvestment
+	var appInv appInvestments
 	for _, inv := range investments {
-		appInvestments = append(appInvestments, appInvestment{Key: inv.Key, Name: inv.Name})
-		for mKey, Sum := range Summarize(inv.Ops) {
-			s, ok := summ[mKey]
-			if !ok {
-				s = &appMonthlySummary{
-					MonthKey:         mKey,
-					Header:           fmt.Sprintf("%v/%v", mKey.Month, mKey.Year),
-					MonthlySummaries: make([]*appInvestmentSummary, 0),
-				}
-				summ[mKey] = s
-			}
-			s.MonthlySummaries = append(s.MonthlySummaries, &appInvestmentSummary{Investment: inv.Name, Summary: Sum})
-		}
+		appInv = append(appInv, appInvestment{inv, Summarize(inv.Ops)})
 	}
-
-	var appMonthlySummaries monthlySummaries
-	for _, v := range summ {
-		appMonthlySummaries = append(appMonthlySummaries, v)
-	}
-	sort.Sort(appMonthlySummaries)
+	sort.Sort(appInv)
 	params := appParams{
 		User:         u.String(),
 		Currency:     Currency,
 		LogoutURL:    logoutUrl,
-		Investments:  appInvestments,
-		AllSummaries: appMonthlySummaries,
-		SummaryGraph: GraphSummary(appMonthlySummaries)}
+		Investments:  appInv,
+		SummaryGraph: AmountSummaryChart(appInv)}
 	if err := appTemplate.Execute(w, params); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-type graphPoint struct {
-	x int
-	y float32
+// timeSeriesPoint represents a chart point where x-axis is a timeseries.
+// All fields are private because interesting result is the String().
+type timeSeriesPoint struct {
+	date    time.Time
+	balance float32
 }
 
-func (g graphPoint) String() string {
-	return fmt.Sprintf("[%d, %.2f]", g.x, g.y)
+func (g timeSeriesPoint) String() string {
+	return fmt.Sprintf("[%d, %.2f]", g.date.UnixNano()/1000000, g.balance)
 }
 
-func GraphSummary(summary monthlySummaries) []graphPoint {
-	var graph []graphPoint
-	for monthIndex, ms := range summary {
-		summ := float32(0)
-		for _, is := range ms.MonthlySummaries {
-			summ += is.Summary.Balance
+func AmountSummaryChart(ais appInvestments) []timeSeriesPoint {
+	auxChart := make(map[time.Time]float32)
+	for _, ai := range ais {
+		for _, s := range ai.Summary {
+			auxChart[s.Date] += s.Balance
 		}
-		graph = append(graph, graphPoint{monthIndex, summ})
 	}
-	return graph
+	var chart []timeSeriesPoint
+	for t, b := range auxChart {
+		chart = append(chart, timeSeriesPoint{t, b})
+	}
+	return chart
 }
