@@ -2,8 +2,8 @@ package isumm
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
+	"text/template"
 	"time"
 
 	"appengine"
