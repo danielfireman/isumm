@@ -3,7 +3,6 @@ package isumm
 import (
 	"fmt"
 	"net/http"
-	"sort"
 	"text/template"
 	"time"
 
@@ -13,28 +12,11 @@ import (
 
 var appTemplate = template.Must(template.ParseFiles("static/app.template.html"))
 
-// All information needed to render investment information.
-type appInvestments []appInvestment
-
-func (m appInvestments) Len() int      { return len(m) }
-func (m appInvestments) Swap(i, j int) { m[i], m[j] = m[j], m[i] }
-
-// Sort investment lexicographically for rendering the summaries and ops
-// section.
-func (m appInvestments) Less(i, j int) bool {
-	return m[i].Investment.Name < m[j].Investment.Name
-}
-
-type appInvestment struct {
-	Investment *Investment
-	Summary    MonthlySummary
-}
-
 type appParams struct {
 	User         string
 	Currency     string
 	LogoutURL    string
-	Investments  appInvestments
+	Investments  []*Investment
 	SummaryGraph []timeSeriesPoint
 }
 
@@ -51,24 +33,17 @@ func App(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html")
 	investments, err := GetInvestments(c)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	var appInv appInvestments
-	for _, inv := range investments {
-		appInv = append(appInv, appInvestment{inv, Summarize(inv.Ops)})
-	}
-	sort.Sort(appInv)
 	params := appParams{
 		User:         u.String(),
 		Currency:     Currency,
 		LogoutURL:    logoutUrl,
-		Investments:  appInv,
-		SummaryGraph: AmountSummaryChart(appInv)}
+		Investments:  investments,
+		SummaryGraph: AmountSummaryChart(investments)}
 	if err := appTemplate.Execute(w, params); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -85,10 +60,10 @@ func (g timeSeriesPoint) String() string {
 	return fmt.Sprintf("[%d, %.2f]", g.date.UnixNano()/1000000, g.balance)
 }
 
-func AmountSummaryChart(ais appInvestments) []timeSeriesPoint {
+func AmountSummaryChart(invs []*Investment) []timeSeriesPoint {
 	auxChart := make(map[time.Time]float32)
-	for _, ai := range ais {
-		for _, s := range ai.Summary {
+	for _, i := range invs {
+		for _, s := range i.Ops.Summarize() {
 			auxChart[s.Date] += s.Balance
 		}
 	}
