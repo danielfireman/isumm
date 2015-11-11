@@ -29,14 +29,14 @@
 					<input type="hidden" value="d" name="action">
 					<input type="hidden" value="{{$index}}" name="index">
 					<button type="submit" class="pure-button">-</button>
-					{{$op.Date.Format "2006-01-02"}}</span>||<span>{{$op.Type}}</span>||<span>{{$op.Value}}</span>
+					<span>{{$op.Date.Format "2006-01-02"}}</span>||<span>{{$op.Type}}</span>||<span>{{$op.Value}}</span>
 				</form>
-				</span>
 			</ul>
-			{{end}}
-			<a href="/app" class="pure-button pure-button-primary">
-				<i class="fa fa-arrow-left"></i>
-				Back
-			</a>
+		</span>
+		{{end}}
+		<a href="/app" class="pure-button pure-button-primary">
+			<i class="fa fa-arrow-left"></i>
+			Back
+		</a>
 	</body>
-	</head>
+</html>
