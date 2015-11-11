@@ -1,15 +1,11 @@
-.charts-container {
-  justify-content: space-around;
-  padding: 0 10%;
-}
-
 .chart-container {
+	padding: 10px;
 }
 
 .operation-container {
-  padding: 10px;
+ 	padding: 10px;
 }
 
 #summChart, #irateChart {
-  height: 200px;
+ 	height: 200px;
 }
