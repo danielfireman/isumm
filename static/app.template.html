@@ -3,6 +3,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- Pure CSS -->
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
   <!--[if lte IE 8]>
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
@@ -11,8 +12,13 @@
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
   <!--<![endif]-->
 
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <!-- Our own CSS -->
   <link rel="stylesheet" href="static/app.css">
 
+  <!-- Dependencies and code to plot the investment graph -->
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
@@ -103,7 +109,10 @@
             </div>
 
             <div class="pure-controls">
-              <button type="submit" name="action" class="pure-button pure-button-primary">Add</button>
+              <button type="submit" name="action" class="pure-button pure-button-primary">
+                <i class="fa fa-plus"></i>
+                Add
+              </button>
             </div>
           </fieldset>
         </form>
@@ -132,8 +141,14 @@
             </div>
 
             <div class="pure-controls">
-              <button type="submit" name="action" class="pure-button">New/Edit</button>
-              <button type="submit" name="action" class="pure-button">Delete</button>
+              <button type="submit" name="action" class="pure-button">
+                <i class="fa fa-edit"></i>
+                New/Edit
+              </button>
+              <button type="submit" name="action" class="pure-button">
+                <i class="fa fa-trash-o"></i>
+                Delete
+              </button>
             </div>
           </fieldset>
         </form>
@@ -157,7 +172,10 @@
             </div>
 
             <div class="pure-controls">
-              <button type="submit" name="action" class="pure-button">List</button>
+              <button type="submit" name="action" class="pure-button">
+                <i class="fa fa-list"></i>
+                List
+              </button>
             </div>
           </fieldset>
         </form>
@@ -168,14 +186,14 @@
   <div class="pure-g">
     <div class="pure-u-1">
       {{range .Investments}}
-        <ul>
-          <li>{{.Name}}</li>
-          <ul>
+        <ul class="fa-ul">
+          <li><i class="fa-li fa fa-bank"></i>{{.Name}}</li>
+          <ul class="fa-ul">
             {{range .Ops.Summarize}}
             <script>
               balance = formatCurrency({{.Balance}});
               change = formatCurrency({{.Change}});
-              document.write("<li>{{.Date.Format "2006/01"}} || Balance:" + balance + " || Change:" + change);
+              document.write("<li><i class='fa-li fa fa-bar-chart'></i>{{.Date.Format "2006/01"}} || Balance:" + balance + " || Change:" + change);
             </script>
             {{end}}
           </ul>
@@ -186,7 +204,10 @@
 
   <div class="pure-g">
     <div class="pure-u-1">
-      <a href={{.LogoutURL}}>Logout</a>
+      <a href={{.LogoutURL}} class="pure-button">
+        <i class="fa fa-sign-out fa-flip-horizontal"></i>
+        Logout
+      </a>
     </div>
   </div>
 </body>
