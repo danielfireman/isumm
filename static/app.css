@@ -1,7 +1,11 @@
-.op {
-	display:inline-block;
-	padding:10px;
-	vertical-align: text-top;
+.chart-container {
+  padding: 0 10% 0 10%;
 }
 
-#summChart{ width: 450px; height: 200px; }
+.operation-container {
+  padding: 10px;
+}
+
+#summChart {
+  height: 200px;
+}
