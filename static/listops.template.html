@@ -9,7 +9,7 @@
 			<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
 		<![endif]-->
 		<!--[if gt IE 8]><!-->
-			<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
 		<!--<![endif]-->
 
 		<!-- Font Awesome -->
@@ -22,7 +22,7 @@
 		<h1>List Operations for {{.InvName}}</h1>
 		{{$key := .InvKey}}
 		{{range $index, $op := .Ops}}
-			<span>
+		<span>
 			<ul>
 				<form name="delOp" method="post" action="op" class="pure-form">
 					<input type="hidden" name="inv" value="{{$key}}">
@@ -33,10 +33,10 @@
 				</form>
 				</span>
 			</ul>
-		{{end}}
-		<a href="/app" class="pure-button pure-button-primary">
-			<i class="fa fa-arrow-left"></i>
-			Back
-		</a>
+			{{end}}
+			<a href="/app" class="pure-button pure-button-primary">
+				<i class="fa fa-arrow-left"></i>
+				Back
+			</a>
 	</body>
-</head>
+	</head>
