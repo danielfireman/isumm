@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -32,6 +33,10 @@ func (t OpType) String() string {
 	return "Unknown"
 }
 
+func (t OpType) IsValid() bool {
+	return t.String() != "Unknown"
+}
+
 type Operation struct {
 	Value     float32 `datastore:"value,noindex"`
 	Type      OpType  `datastore:"type"`
@@ -52,22 +57,23 @@ func NewOperation(t OpType, v float32, d time.Time) Operation {
 }
 
 func NewOperationFromString(t, v, d string) (Operation, error) {
-	opType, err := strconv.Atoi(t)
+	opTypeInt, err := strconv.Atoi(t)
 	if err != nil {
-		return Operation{}, fmt.Errorf("Invalid operation type: %s", t)
+		return Operation{}, fmt.Errorf("Invalid operation type: \"%s\"", t)
 	}
-	if v == "" {
-		return Operation{}, fmt.Errorf("Value can not be empty.")
+	opType := OpType(opTypeInt)
+	if !opType.IsValid() {
+		return Operation{}, fmt.Errorf("Invalid operation type: \"%s\"", t)
 	}
-	value, err := strconv.ParseFloat(v, 32)
+	value, err := strconv.ParseFloat(strings.TrimSpace(v), 32)
 	if err != nil {
-		return Operation{}, fmt.Errorf("Invalid value: %s", v)
+		return Operation{}, fmt.Errorf("Invalid value: \"%s\"", v)
 	}
 	date, err := time.Parse("2006-01-02", d)
 	if err != nil {
 		return Operation{}, fmt.Errorf("Invalid operation date: %s", d)
 	}
-	return Operation{Timestamp: date.UnixNano(), Value: float32(value), Type: OpType(opType)}, nil
+	return Operation{Timestamp: date.UnixNano(), Value: float32(value), Type: opType}, nil
 }
 
 type Operations []Operation

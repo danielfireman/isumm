@@ -1,6 +1,7 @@
 package isumm
 
 import (
+	"fmt"
 	"reflect"
 	"sort"
 	"testing"
@@ -11,6 +12,9 @@ var (
 	now       = time.Now()
 	nextMonth = now.Add(32 * 24 * time.Hour)
 	incMin    = now.Add(10 * time.Minute)
+	opType    = "1"
+	value     = "12"
+	date      = "2006-01-02"
 )
 
 func TestSort(t *testing.T) {
@@ -18,6 +22,37 @@ func TestSort(t *testing.T) {
 	sort.Sort(o)
 	if o[0].Date().Before(o[1].Date()) {
 		t.Errorf("want %s before than %s", o[0], o[1])
+	}
+}
+
+func TestNewOperationFromString(t *testing.T) {
+	validOp, _ := NewOperationFromString(opType, value, date)
+	testCases := []struct {
+		desc, t, v, d string
+		want          *Operation
+	}{
+		// Invalid cases.
+		{desc: "invalid value - empty", t: opType, v: "", d: date},
+		{desc: "invalid value - chars", t: opType, v: "acb", d: date},
+		{desc: "invalid op - empty string", t: "", v: value, d: date},
+		{desc: "invalid op - type does not exist", t: "94879138ddffg", v: value, d: date},
+		{desc: "invalid date", t: opType, v: value, d: "31/31/31"},
+		// Valid cases.
+		{desc: "valid - contain spaces", t: opType, v: fmt.Sprintf(" %s ", value), d: date, want: &validOp},
+		{desc: "valid - perfect", t: opType, v: value, d: date, want: &validOp},
+	}
+	for _, test := range testCases {
+		got, err := NewOperationFromString(test.t, test.v, test.d)
+		switch {
+		case test.want == nil:
+			if err == nil {
+				t.Errorf("got:nil expected:err. Test:(%+v)", test)
+			}
+		default:
+			if !reflect.DeepEqual(test.want, &got) {
+				t.Errorf("got:(%+v) want:(%+v). Test:(%+v)", got, test.want, test)
+			}
+		}
 	}
 }
 
