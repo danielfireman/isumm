@@ -34,9 +34,11 @@ Edit `config.go` to limit access to just yourself.
 Replace `danielfireman@gmail.com` with your Google Account email address.
 Feel free to change any other configurations in that file that that might be relevant to you, such as the currency symbol.
 
+Edit `app.yaml` to change the application name. We suggest you use the pattern `isumm-YOUR_NAME`.
+
 Once you're set, let's create your deployment.
-Go to the [Google Developers Console][console] and create a new project with whatever name you want.
-We suggest you use the pattern `isumm-YOUR_NAME`.
+Go to the [Google Developers Console][console] and create a new project with whatever name you want. We suggest you use the pattern `isumm-YOUR_NAME`.
+
 
 [console]: https://console.developers.google.com
 
