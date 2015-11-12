@@ -45,3 +45,6 @@ Then, perform these steps to deploy:
 	% goapp deploy -application isumm-YOUR_NAME
 
 Point your browser to <http://isumm-YOUR_NAME.appspot.com> and voilà! :)
+
+## Continuous deployment with codeship
+codeship.io is free and supports continuous deployment to appengine.
