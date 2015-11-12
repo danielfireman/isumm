@@ -15,3 +15,11 @@ Main goals:
     * Withdrawal and Deposit: used to calculate month-by-month profit.
     * Balance: for the sake of simplification, only one is considered per month. If you added more than one balance operations, only the most-recent is used.
 * Investment: yeah, the name says everything. It groups a set of operations.
+
+## Dev Notes
+### Getting code coverage on GAE
+GAE has a different definition of workspace and does not share your $GOROOT. To get everything up and running one should:
+```bash
+$ goapp install golang.org/x/tools/cmd/cover
+$ goapp test -v -coverprofile=/tmp/coverprofile.out; goapp tool cover -html /tmp/coverprofile.out
+```
