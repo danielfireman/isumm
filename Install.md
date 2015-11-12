@@ -49,4 +49,6 @@ Then, perform these steps to deploy:
 Point your browser to <http://isumm-YOUR_NAME.appspot.com> and voilà! :)
 
 ## Continuous deployment with codeship
-codeship.io is free and supports continuous deployment to appengine.
+codeship.io is free and supports continuous deployment to appengine. Instructions for deployment can be found [here](https://codeship.com/documentation/continuous-deployment/deployment-to-google-app-engine/).
+
+For for testing there is only small caveat, just replace go get and go test to goapp get and goapp test. goapp is already installed in codeship.ip builders.

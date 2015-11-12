@@ -1,4 +1,4 @@
-# ISumm
+[ ![Codeship Status for danielfireman/isumm](https://codeship.com/projects/6fd0e080-6b95-0133-2eb6-1a8865ac42d3/status?branch=master)](https://codeship.com/projects/115265)
 
 I created this project based on a personal need of having a summarized view of my investiments. The idea is to have manually record monthly operations (i.e. balance, deposits or withdrawal) and properly generates a simple summary views of investments.
 
