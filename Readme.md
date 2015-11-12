@@ -23,3 +23,8 @@ GAE has a different definition of workspace and does not share your $GOROOT. To 
 $ goapp install golang.org/x/tools/cmd/cover
 $ goapp test -v -coverprofile=/tmp/coverprofile.out; goapp tool cover -html /tmp/coverprofile.out
 ```
+
+### Deleting production data
+It will be more and more rare, but if isumm devs change the schema, one is going ot need to clean up the production data store (sorry for that). To do so, go to your development console, on the top-right menu -> datastore, then setting  and enable Datastore Admin. After that Open Datastore Admin and delete all entities. 
+
+A map reduce will be kicked off to execute the operation. Please take a sit and relax (good time for a coffee).
