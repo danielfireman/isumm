@@ -5,64 +5,71 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
-	"time"
 
 	"appengine"
 )
 
-func Op(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	action := r.FormValue("action")
-	invStr := r.FormValue("inv")
-	if invStr == "" {
-		http.Error(w, "Investment key can not be empty.", http.StatusPreconditionFailed)
-		return
-	}
-	inv, err := GetInvestment(c, invStr)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+const (
+	OpsParamType  = "type"
+	OpsParamValue = "value"
+	OpsParamDate  = "date"
+	OpsParamInv   = "inv"
+)
 
+type handlingError struct {
+	Msg  string
+	Code int
+}
+
+func Op(w http.ResponseWriter, r *http.Request) {
+	if err := handleOp(appengine.NewContext(r), r); err != nil {
+		http.Error(w, err.Msg, err.Code)
+		return
+	}
+	// Redirect is here because it leads to a panic (invalid memory address) when testing. It looks like a
+	// appengine bug.
+	http.Redirect(w, r, "/app", http.StatusFound)
+}
+
+func handleOp(c appengine.Context, r *http.Request) *handlingError {
+	// 1st phase: parameters extraction and validation.
+	action := r.FormValue("action")
+	invStr := r.FormValue(OpsParamInv)
+	if invStr == "" {
+		return &handlingError{"Investment key can not be empty.", http.StatusPreconditionFailed}
+	}
+	var (
+		err   error
+		op    Operation
+		index int
+	)
 	switch action {
 	case "d":
-		indexStr := r.FormValue("index")
-		index, err := strconv.Atoi(indexStr)
+		index, err = strconv.Atoi(r.FormValue("index"))
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Invalid operation index: %s", indexStr), http.StatusPreconditionFailed)
-			return
+			return &handlingError{fmt.Sprintf("Invalid operation index: %s", r.FormValue("index")), http.StatusPreconditionFailed}
 		}
+	default:
+		op, err = NewOperationFromString(r.FormValue(OpsParamType), r.FormValue(OpsParamValue), r.FormValue(OpsParamDate))
+		if err != nil {
+			return &handlingError{err.Error(), http.StatusPreconditionFailed}
+		}
+	}
+	// 2nd phase: updating investment.
+	inv, err := GetInvestment(c, invStr)
+	if err != nil {
+		return &handlingError{err.Error(), http.StatusInternalServerError}
+	}
+	switch action {
+	case "d":
 		inv.Ops = append(inv.Ops[:index], inv.Ops[index+1:]...)
 
 	default:
-		strOpType := r.FormValue("type")
-		opType, err := strconv.Atoi(strOpType)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Invalid operation type: %s", strOpType), http.StatusPreconditionFailed)
-			return
-		}
-		strValue := r.FormValue("value")
-		if strValue == "" {
-			http.Error(w, "Value can not be empty.", http.StatusPreconditionFailed)
-			return
-		}
-		value, err := strconv.ParseFloat(strValue, 32)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Invalid value: %s", strValue), http.StatusPreconditionFailed)
-			return
-		}
-		strDate := r.FormValue("date")
-		date, err := time.Parse("2006-01-02", strDate)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Invalid operation date: %s", strDate), http.StatusPreconditionFailed)
-			return
-		}
-		inv.Ops = append(inv.Ops, Operation{Date: date, Value: float32(value), Type: OpType(opType)})
+		inv.Ops = append(inv.Ops, op)
 		sort.Sort(inv.Ops)
 	}
 	if err := PutInvestment(c, inv); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return &handlingError{err.Error(), http.StatusInternalServerError}
 	}
-	http.Redirect(w, r, "/app", http.StatusFound)
+	return nil
 }

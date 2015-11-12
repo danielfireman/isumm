@@ -30,7 +30,11 @@ func PutInvestment(c appengine.Context, i *Investment) error {
 		}
 		k = decoded
 	}
-	_, err := datastore.Put(c, k, i)
+	k, err := datastore.Put(c, k, i)
+	if err != nil {
+		return err
+	}
+	i.Key = k.Encode()
 	return err
 }
 

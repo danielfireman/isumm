@@ -1,7 +1,9 @@
 package isumm
 
 import (
+	"fmt"
 	"sort"
+	"strconv"
 	"time"
 )
 
@@ -31,9 +33,41 @@ func (t OpType) String() string {
 }
 
 type Operation struct {
-	Value float32   `datastore:"value,noindex"`
-	Date  time.Time `datastore:"date`
-	Type  OpType    `datastore:"type"`
+	Value     float32 `datastore:"value,noindex"`
+	Type      OpType  `datastore:"type"`
+	Timestamp int64   `datastore:"date"`
+}
+
+// TODO(danielfireman): Verify if the date needs to be cached.
+func (o *Operation) Date() time.Time {
+	return time.Unix(0, o.Timestamp)
+}
+
+func (o *Operation) SetDate(d time.Time) {
+	o.Timestamp = d.UnixNano()
+}
+
+func NewOperation(t OpType, v float32, d time.Time) Operation {
+	return Operation{Type: t, Value: v, Timestamp: d.UnixNano()}
+}
+
+func NewOperationFromString(t, v, d string) (Operation, error) {
+	opType, err := strconv.Atoi(t)
+	if err != nil {
+		return Operation{}, fmt.Errorf("Invalid operation type: %s", t)
+	}
+	if v == "" {
+		return Operation{}, fmt.Errorf("Value can not be empty.")
+	}
+	value, err := strconv.ParseFloat(v, 32)
+	if err != nil {
+		return Operation{}, fmt.Errorf("Invalid value: %s", v)
+	}
+	date, err := time.Parse("2006-01-02", d)
+	if err != nil {
+		return Operation{}, fmt.Errorf("Invalid operation date: %s", d)
+	}
+	return Operation{Timestamp: date.UnixNano(), Value: float32(value), Type: OpType(opType)}, nil
 }
 
 type Operations []Operation
@@ -43,7 +77,7 @@ func (ops Operations) Len() int {
 }
 
 func (ops Operations) Less(i, j int) bool {
-	return ops[i].Date.After(ops[j].Date)
+	return ops[i].Timestamp > ops[j].Timestamp
 }
 
 func (ops Operations) Swap(i, j int) {
@@ -72,7 +106,7 @@ func (ops Operations) Summarize() []Summary {
 	for i, op := range ops {
 		// If the month has changed (please notice that ops are sorted by
 		// month).
-		if i > 0 && ops[i-1].Date.Month() != op.Date.Month() {
+		if i > 0 && ops[i-1].Date().Month() != op.Date().Month() {
 			returned = append(returned, summ)
 			summ.Reset()
 		}
@@ -80,7 +114,7 @@ func (ops Operations) Summarize() []Summary {
 		// would like to enjoy the datetime goodies and format (flot and
 		// other libraries support it natively). So, setting the day to
 		// the first day of the month.
-		summ.Date = monthYear(op.Date)
+		summ.Date = monthYear(op.Date())
 		switch op.Type {
 		case Withdrawal:
 			summ.Change -= op.Value

@@ -127,7 +127,7 @@ $(document).ready(function() {
 					<form action="inv" method="post" class="pure-form pure-form-aligned">
 						<fieldset>
 							<legend>Investments</legend>
-							<select name="inv" class="pure-input-1-2" required>
+							<select name="inv" class="pure-input-1-2">
 								<option value="">Investment</option>
 								{{range .Investments}}
 								<option value="{{.Key}}">{{.Name}}</option>
