@@ -145,18 +145,18 @@ $(document).ready(function() {
 					<form action="inv" method="post" class="pure-form pure-form-aligned">
 						<fieldset>
 							<legend>Investments</legend>
-							<select name="inv" class="pure-input-1-2">
+							<select name="key" class="pure-input-1-2">
 								<option value="">Investment</option>
 								{{range .Investments}}
 								<option value="{{.Key}}">{{.Name}}</option>
 								{{end}}
 							</select>
 							<input name="name" type="text" size="15" class="pure-input-1-2" placeholder="Name">						 
-							<button type="submit" name="action" class="pure-button pure-input-1-2 pure-button-primary">
+							<button type="submit" name="action" value="ae" class="pure-button pure-input-1-2 pure-button-primary">
 								<i class="fa fa-edit"></i>
 								New/Edit
 							</button>
-							<button type="submit" name="action" class="pure-button pure-input-1-2">
+							<button type="submit" name="action" value="d" class="pure-button pure-input-1-2">
 								<i class="fa fa-trash-o"></i>
 								Delete
 							</button>

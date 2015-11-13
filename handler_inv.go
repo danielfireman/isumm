@@ -1,37 +1,62 @@
 package isumm
 
 import (
+	"fmt"
 	"net/http"
 
 	"appengine"
 )
 
-func Inv(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	action := r.FormValue("action")
-	switch action {
-	case "Delete":
-		k := r.FormValue("key")
-		if k == "" {
-			http.Error(w, "Investment key can not be empty.", http.StatusPreconditionFailed)
-			return
-		}
-		if err := DeleteInvestment(c, k); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+const (
+	InvParamKey  = "key"
+	InvParamName = "name"
+)
 
-	default:
-		name := r.FormValue("name")
-		if name == "" {
-			http.Error(w, "Investment name can not be empty.", http.StatusPreconditionFailed)
-			return
-		}
-		i := &Investment{Name: name, Key: r.FormValue("key")}
-		if err := PutInvestment(c, i); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+func Inv(w http.ResponseWriter, r *http.Request) {
+	if err := handleInv(appengine.NewContext(r), r); err != nil {
+		http.Error(w, err.Msg, err.Code)
+		return
 	}
+	// Redirect is here because it leads to a panic (invalid memory address) when testing. It looks like a
+	// appengine bug.
 	http.Redirect(w, r, "/app", http.StatusFound)
+}
+
+func handleInv(c appengine.Context, r *http.Request) *handlingError {
+	action := r.FormValue(ActionParam)
+	switch action {
+	case DeleteAction:
+		if err := deleteInvestment(c, r.FormValue(InvParamKey)); err != nil {
+			return &handlingError{err.Error(), http.StatusPreconditionFailed}
+		}
+	case PostAction:
+		if err := postInvestment(c, r.FormValue(InvParamName), r.FormValue(InvParamKey)); err != nil {
+			return &handlingError{err.Error(), http.StatusPreconditionFailed}
+		}
+	default:
+		return &handlingError{fmt.Sprintf("Invalid action:\"%s\"", action), http.StatusBadRequest}
+	}
+	return nil
+}
+
+func deleteInvestment(c appengine.Context, k string) error {
+	if k == "" {
+		return fmt.Errorf("Investment key can not be empty.")
+	}
+	return DeleteInvestment(c, k)
+}
+
+func postInvestment(c appengine.Context, name, key string) error {
+	if name == "" {
+		return fmt.Errorf("Investment name can not be empty.")
+	}
+	if key == "" {
+		return PutInvestment(c, &Investment{Name: name})
+	}
+	inv, err := GetInvestment(c, key)
+	if err != nil {
+		return fmt.Errorf("Failure fetching investment to be updated. Name:%s Key:%s", name, key)
+	}
+	inv.Name = name
+	return PutInvestment(c, inv)
 }

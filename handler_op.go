@@ -16,11 +16,6 @@ const (
 	OpsParamInv   = "inv"
 )
 
-type handlingError struct {
-	Msg  string
-	Code int
-}
-
 func Op(w http.ResponseWriter, r *http.Request) {
 	if err := handleOp(appengine.NewContext(r), r); err != nil {
 		http.Error(w, err.Msg, err.Code)
@@ -33,7 +28,7 @@ func Op(w http.ResponseWriter, r *http.Request) {
 
 func handleOp(c appengine.Context, r *http.Request) *handlingError {
 	// 1st phase: parameters extraction and validation.
-	action := r.FormValue("action")
+	action := r.FormValue(ActionParam)
 	invStr := r.FormValue(OpsParamInv)
 	if invStr == "" {
 		return &handlingError{"Investment key can not be empty.", http.StatusPreconditionFailed}
@@ -44,7 +39,7 @@ func handleOp(c appengine.Context, r *http.Request) *handlingError {
 		index int
 	)
 	switch action {
-	case "d":
+	case DeleteAction:
 		index, err = strconv.Atoi(r.FormValue("index"))
 		if err != nil {
 			return &handlingError{fmt.Sprintf("Invalid operation index: %s", r.FormValue("index")), http.StatusPreconditionFailed}
@@ -61,7 +56,7 @@ func handleOp(c appengine.Context, r *http.Request) *handlingError {
 		return &handlingError{err.Error(), http.StatusInternalServerError}
 	}
 	switch action {
-	case "d":
+	case DeleteAction:
 		inv.Ops = append(inv.Ops[:index], inv.Ops[index+1:]...)
 
 	default:
