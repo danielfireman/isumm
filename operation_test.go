@@ -59,15 +59,15 @@ func TestNewOperationFromString(t *testing.T) {
 func TestSummarize(t *testing.T) {
 	data := []struct {
 		ops  Operations
-		summ []Summary
+		summ Summaries
 	}{
 		{ // Simple case: One entry containing only balance.
 			ops:  Operations{NewOperation(Balance, 1.2, now)},
-			summ: []Summary{{Date: monthYear(now), Balance: 1.2, Change: 0}},
+			summ: Summaries{{Date: monthYear(now), Balance: 1.2, Change: 0}},
 		},
 		{ // Empty case.
 			ops:  Operations{},
-			summ: []Summary{},
+			summ: Summaries{},
 		},
 		{
 			ops: Operations{
@@ -75,21 +75,21 @@ func TestSummarize(t *testing.T) {
 				NewOperation(Deposit, 1.0, now),
 				NewOperation(Balance, 2.2, nextMonth),
 			},
-			summ: []Summary{
+			summ: Summaries{
 				{Date: monthYear(nextMonth), Balance: 2.2, Change: 0},
 				{Date: monthYear(now), Balance: 1.2, Change: 1.0},
 			},
 		},
 		{ // Middle of the month, no balance.
 			ops:  Operations{NewOperation(Deposit, 1.0, now)},
-			summ: []Summary{{Date: monthYear(now), Balance: 0, Change: 1.0}},
+			summ: Summaries{{Date: monthYear(now), Balance: 0, Change: 1.0}},
 		},
 		{ // Two balances --> Use the most recent.
 			ops: Operations{
 				NewOperation(Balance, 1.2, incMin),
 				NewOperation(Balance, 2.2, now),
 			},
-			summ: []Summary{{Date: monthYear(now), Balance: 1.2, Change: 0}},
+			summ: Summaries{{Date: monthYear(now), Balance: 1.2, Change: 0}},
 		},
 	}
 	for _, d := range data {
