@@ -2,7 +2,6 @@ package isumm
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"time"
 )
@@ -53,9 +52,7 @@ func AmountSummaryChart(invs []*Investment) TimeseriesChart {
 func InterestRateChart(invs []*Investment) TimeseriesChart {
 	summByDate := make(map[time.Time]Summary)
 	for _, i := range invs {
-		log.Printf("Inv: %v", i)
 		for _, s := range i.Ops.Summarize() {
-			log.Printf("Summ: %v", s)
 			v := summByDate[s.Date]
 			v.Date = s.Date
 			v.Balance += s.Balance
@@ -63,7 +60,6 @@ func InterestRateChart(invs []*Investment) TimeseriesChart {
 			summByDate[s.Date] = v
 		}
 	}
-	log.Printf("byDate: %v", summByDate)
 	var summs Summaries
 	for _, s := range summByDate {
 		summs = append(summs, s)
@@ -81,6 +77,5 @@ func InterestRateChart(invs []*Investment) TimeseriesChart {
 		}
 		chart = append(chart, t)
 	}
-	log.Printf("%v", chart)
 	return chart
 }
