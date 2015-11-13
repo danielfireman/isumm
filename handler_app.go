@@ -1,10 +1,8 @@
 package isumm
 
 import (
-	"fmt"
 	"net/http"
 	"text/template"
-	"time"
 
 	"appengine"
 	"appengine/user"
@@ -13,11 +11,12 @@ import (
 var appTemplate = template.Must(template.ParseFiles("static/app.template.html"))
 
 type appParams struct {
-	User         string
-	Currency     string
-	LogoutURL    string
-	Investments  []*Investment
-	SummaryGraph []timeSeriesPoint
+	User               string
+	Currency           string
+	LogoutURL          string
+	Investments        []*Investment
+	AmountSummaryChart TimeseriesChart
+	InterestRateChart  TimeseriesChart
 }
 
 func App(w http.ResponseWriter, r *http.Request) {
@@ -39,37 +38,13 @@ func App(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	params := appParams{
-		User:         u.String(),
-		Currency:     Currency,
-		LogoutURL:    logoutUrl,
-		Investments:  investments,
-		SummaryGraph: AmountSummaryChart(investments)}
+		User:               u.String(),
+		Currency:           Currency,
+		LogoutURL:          logoutUrl,
+		Investments:        investments,
+		AmountSummaryChart: AmountSummaryChart(investments),
+		InterestRateChart:  InterestRateChart(investments)}
 	if err := appTemplate.Execute(w, params); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-}
-
-// timeSeriesPoint represents a chart point where x-axis is a timeseries.
-// All fields are private because interesting result is the String().
-type timeSeriesPoint struct {
-	date    time.Time
-	balance float32
-}
-
-func (g timeSeriesPoint) String() string {
-	return fmt.Sprintf("[%d, %.2f]", g.date.UnixNano()/1000000, g.balance)
-}
-
-func AmountSummaryChart(invs []*Investment) []timeSeriesPoint {
-	auxChart := make(map[time.Time]float32)
-	for _, i := range invs {
-		for _, s := range i.Ops.Summarize() {
-			auxChart[s.Date] += s.Balance
-		}
-	}
-	var chart []timeSeriesPoint
-	for t, b := range auxChart {
-		chart = append(chart, timeSeriesPoint{t, b})
-	}
-	return chart
 }

@@ -22,9 +22,10 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/flot.tooltip/0.8.5/jquery.flot.tooltip.js"></script>
 		<script type="text/javascript">
-function formatCurrency(n) {
-	nStr = '{{.Currency}} ' + n;
+function formatNumber(n, preSymbol, postSymbol) {
+	nStr = preSymbol + ' ' + n;
 	x = nStr.split('.');
 	x1 = x[0];
 	x2 = x.length > 1 ? '.' + x[1] : '';
@@ -32,9 +33,18 @@ function formatCurrency(n) {
 	while (rgx.test(x1)) {
 		x1 = x1.replace(rgx, '$1' + ',' + '$2');
 	}
-	return x1 + x2;
+	return x1 + x2 + ' ' + postSymbol;
 }
-var data = [[{{range .SummaryGraph}}{{.}},{{end}}]];
+
+function formatCurrency(n) {
+	return formatNumber(n, '{{.Currency}}', '')
+}
+
+function formatPercent(n) {
+	return formatNumber(n, '', '%')
+}
+var amountSummaryData = [[{{range .AmountSummaryChart}}{{.}},{{end}}]];
+var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
 var options = {
 	series: {
 		shadowSize: 5,
@@ -53,14 +63,22 @@ var options = {
 		timeformat: "%m/%Y",
 		tickSize: [1, "month"],
 	},
-	yaxis: {
-		tickFormatter: formatCurrency,
-		axisLabel: "Total Amount ({{.Currency}})",
-	},
+	tooltip : true,
 };
+aSummaryOptions = JSON.parse(JSON.stringify(options))
+aSummaryOptions.yaxis =  {
+	tickFormatter: formatCurrency,
+	axisLabel: "Total Amount ({{.Currency}})",
+},
+irateChartOptions = JSON.parse(JSON.stringify(options))
+irateChartOptions.yaxis =  {
+	tickSize: 0.25,
+	tickFormatter: formatPercent,
+	axisLabel: "Interest Rate (%)",
+}
 $(document).ready(function() {
-	$.plot("#summChart", data, options);
-	$.plot("#irateChart", data, options);
+	$.plot("#summChart", amountSummaryData, aSummaryOptions);
+	$.plot("#irateChart", interestRateData, irateChartOptions);
 });
 		</script>
 	</head>

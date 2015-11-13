@@ -87,9 +87,7 @@ func (ops Operations) Less(i, j int) bool {
 }
 
 func (ops Operations) Swap(i, j int) {
-	aux := ops[i]
-	ops[i] = ops[j]
-	ops[j] = aux
+	ops[i], ops[j] = ops[j], ops[i]
 }
 
 type Summary struct {
@@ -103,7 +101,21 @@ func (s *Summary) Reset() {
 	s.Change = 0
 }
 
-func (ops Operations) Summarize() []Summary {
+type Summaries []Summary
+
+func (s Summaries) Len() int {
+	return len(s)
+}
+
+func (s Summaries) Less(i, j int) bool {
+	return s[i].Date.Before(s[j].Date)
+}
+
+func (s Summaries) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (ops Operations) Summarize() Summaries {
 	if !sort.IsSorted(ops) {
 		sort.Sort(ops)
 	}
