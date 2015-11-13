@@ -18,7 +18,7 @@ func TestHandleInv_Sucess(t *testing.T) {
 	defer c.Close()
 
 	// Adding investment.
-	name := "foo"
+	name := "FOO"
 	form := url.Values{ActionParam: {PostAction}, InvParamKey: {""}, InvParamName: {name}}
 	if err := handleInv(c, &http.Request{Form: form}); err != nil {
 		t.Fatalf("handleOp want nil got:%q", err)
@@ -42,7 +42,7 @@ func TestHandleInv_Sucess(t *testing.T) {
 	}
 
 	// Renaming the recently added investment.
-	newName := "foo"
+	newName := "BEZZ"
 	form = url.Values{ActionParam: {PostAction}, InvParamKey: {inv.Key}, InvParamName: {newName}}
 	if err := handleInv(c, &http.Request{Form: form}); err != nil {
 		t.Fatalf("handleOp want nil got:%q", err)
