@@ -60,4 +60,17 @@ func TestHandleInv_Sucess(t *testing.T) {
 	if !reflect.DeepEqual(inv.Ops, updatedInv.Ops) {
 		t.Fatalf("ops want:%v got:%v", inv.Ops, updatedInv.Ops)
 	}
+
+	// Deleting investment.
+	form = url.Values{ActionParam: {DeleteAction}, InvParamKey: {inv.Key}}
+	if err := handleInv(c, &http.Request{Form: form}); err != nil {
+		t.Fatalf("handleOp want nil got:%q", err)
+	}
+	invs, err = GetInvestments(c)
+	if err != nil {
+		t.Fatalf("getInvestment returned an error: %q", err)
+	}
+	if len(invs) != 0 {
+		t.Fatalf("#investments want:0 got:%d", len(invs))
+	}
 }
