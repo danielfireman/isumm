@@ -90,15 +90,22 @@ func (ops Operations) Swap(i, j int) {
 	ops[i], ops[j] = ops[j], ops[i]
 }
 
+type SummaryOp struct {
+	Index     int
+	Operation Operation
+}
+
 type Summary struct {
-	Date    time.Time
-	Balance float32
-	Change  float32
+	Date       time.Time
+	Balance    float32
+	Change     float32
+	SummaryOps []SummaryOp
 }
 
 func (s *Summary) Reset() {
 	s.Balance = 0
 	s.Change = 0
+	s.SummaryOps = nil
 }
 
 type Summaries []Summary
@@ -146,6 +153,10 @@ func (ops Operations) Summarize() Summaries {
 				summ.Balance = op.Value
 			}
 		}
+		// We aggregate the operations for that month as part of the Operations
+		// field, which allows us to show a nice log of everything affecting that
+		// month.
+		summ.SummaryOps = append(summ.SummaryOps, SummaryOp{Index: i, Operation: op})
 	}
 	// We must not forget the latest summary.
 	if len(ops) > 0 {

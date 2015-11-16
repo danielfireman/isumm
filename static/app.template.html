@@ -187,15 +187,35 @@ $(document).ready(function() {
 		<div class="pure-g">
 			<div class="pure-u-1">
 				{{range .Investments}}
+				{{$key := .Key}}
 				<ul class="fa-ul">
 					<li><i class="fa-li fa fa-bank"></i>{{.Name}}</li>
 					<ul class="fa-ul">
 						{{range .Ops.Summarize}}
-						<script>
+						<li>
+							<i class="fa-li fa fa-bar-chart"></i>
+							<script>
 balance = formatCurrency({{.Balance}});
 change = formatCurrency({{.Change}});
-document.write("<li><i class='fa-li fa fa-bar-chart'></i>{{.Date.Format "2006/01"}} || Balance:" + balance + " || Change:" + change);
-						</script>
+document.write("{{.Date.Format "2006/01"}} || Balance:" + balance + " || Change:" + change);
+							</script>
+							<ul class="fa-ul">
+								{{range .SummaryOps}}
+								<li>
+									<form method="post" action="op" class="pure-form">
+										<input type="hidden" name="inv" value="{{$key}}">
+										<input type="hidden" name="action" value="d">
+										<input type="hidden" name="index" value="{{.Index}}">
+										<button type="submit" class="pure-button"><i class="fa fa-trash-o"></i></button>
+										<script>
+value = formatCurrency({{.Operation.Value}});
+document.write("<span>{{.Operation.Date.Format "2006-01-02"}} || {{.Operation.Type}}: " + value + "</span>");
+										</script>
+									</form>
+								</li>
+								{{end}}
+							</ul>
+						</li>
 						{{end}}
 					</ul>
 				</ul>
