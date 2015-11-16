@@ -73,7 +73,7 @@ func InterestRateChart(invs []*Investment) TimeseriesChart {
 		case i == 0:
 			t.value = 0
 		default:
-			t.value = float32(s.Balance-s.Change-summs[i-1].Balance) / float32(s.Change+summs[i-1].Balance)
+			t.value = float32(s.Balance-s.Change-summs[i-1].Balance) / float32(s.Change+summs[i-1].Balance) * 100.0
 		}
 		chart = append(chart, t)
 	}
