@@ -114,24 +114,24 @@ $(document).ready(function() {
 						<fieldset class="pure-group">
 							<legend>Add Operation</legend>
 
-							<select name="type" class="pure-input-1-2" required>
+							<select name="type" class="pure-input-1" required>
 								<option value="">Type</option>
 								<option value="1">Balance</option>
 								<option value="2">Deposit</option>
 								<option value="3">Withdrawal</option>
 							</select>
 
-							<select name="inv" class="pure-input-1-2" required>
+							<select name="inv" class="pure-input-1" required>
 								<option value="">Investment</option>
 								{{range .Investments}}
 								<option value="{{.Key}}">{{.Name}}</option>
 								{{end}}
 							</select>
 
-							<input name="value" type="text" size="10" class="pure-input-1-2" placeholder="Value" required>
-							<input name="date" type="date" class="pure-input-1-2" placeholder="Date" required>
+							<input name="value" type="text" size="10" class="pure-input-1" placeholder="Value" required>
+							<input name="date" type="date" class="pure-input-1" placeholder="Date" required>
 
-							<button type="submit" name="action" class="pure-button pure-input-1-2 pure-button-primary">
+							<button type="submit" name="action" class="pure-button pure-input-1 pure-button-primary">
 								<i class="fa fa-plus"></i>
 								Add
 							</button>
@@ -145,18 +145,18 @@ $(document).ready(function() {
 					<form action="inv" method="post" class="pure-form pure-form-aligned">
 						<fieldset>
 							<legend>Investments</legend>
-							<select name="key" class="pure-input-1-2">
+							<select name="key" class="pure-input-1">
 								<option value="">Investment</option>
 								{{range .Investments}}
 								<option value="{{.Key}}">{{.Name}}</option>
 								{{end}}
 							</select>
-							<input name="name" type="text" size="15" class="pure-input-1-2" placeholder="Name">						 
-							<button type="submit" name="action" value="ae" class="pure-button pure-input-1-2 pure-button-primary">
+							<input name="name" type="text" size="15" class="pure-input-1" placeholder="Name">						 
+							<button type="submit" name="action" value="ae" class="pure-button pure-input-1 pure-button-primary">
 								<i class="fa fa-edit"></i>
 								New/Edit
 							</button>
-							<button type="submit" name="action" value="d" class="pure-button pure-input-1-2">
+							<button type="submit" name="action" value="d" class="pure-button pure-input-1">
 								<i class="fa fa-trash-o"></i>
 								Delete
 							</button>
@@ -180,7 +180,7 @@ $(document).ready(function() {
 							<script>
 balance = formatCurrency({{.Balance}});
 change = formatCurrency({{.Change}});
-document.write("{{.Date.Format "2006/01"}} Balance:" + balance + " Change:" + change);
+document.write("{{.Date.Format "2006/01"}}: " + balance + " :: " + change);
 							</script></a>
 							<div id="summaryops_{{$key}}_{{$summId}}" class="panel-collapse collapse">
 								<ul>
