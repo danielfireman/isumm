@@ -81,13 +81,6 @@ irateChartOptions.yaxis =  {
 $(document).ready(function() {
 	$.plot("#summChart", amountSummaryData, aSummaryOptions);
 	$.plot("#irateChart", interestRateData, irateChartOptions);
-	// Changing icons of collapsible summaries.
-	$('#summarySection').on('shown.bs.collapse', function () {
-	   $(".collapsible").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
-	});
-	$('#summarySection').on('hidden.bs.collapse', function () {
-	   $(".collapsible").removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
-	});
 });   
 		</script>
 	</head>
@@ -182,7 +175,7 @@ $(document).ready(function() {
 						{{range .Ops.Summarize}}
 						{{$summId := .Date.Format "2006_01"}}
 						<li> <div id="summarySection">
-							<i class="collapsible fa fa-plus-square-o"></i>
+							<i class="fa fa-plus-square-o"></i>
 							<a data-toggle="collapse" data-parent="#accordion" href="#summaryops_{{$key}}_{{$summId}}">
 							<script>
 balance = formatCurrency({{.Balance}});
