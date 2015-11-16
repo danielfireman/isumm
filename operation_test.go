@@ -63,7 +63,16 @@ func TestSummarize(t *testing.T) {
 	}{
 		{ // Simple case: One entry containing only balance.
 			ops:  Operations{NewOperation(Balance, 1.2, now)},
-			summ: Summaries{{Date: monthYear(now), Balance: 1.2, Change: 0}},
+			summ: Summaries{
+				{
+					Date: monthYear(now),
+					Balance: 1.2,
+					Change: 0,
+					SummaryOps: []SummaryOp{
+						{Index: 0, Operation: NewOperation(Balance, 1.2, now)},
+					},
+				},
+			},
 		},
 		{ // Empty case.
 			ops:  Operations{},
@@ -76,20 +85,54 @@ func TestSummarize(t *testing.T) {
 				NewOperation(Balance, 2.2, nextMonth),
 			},
 			summ: Summaries{
-				{Date: monthYear(nextMonth), Balance: 2.2, Change: 0},
-				{Date: monthYear(now), Balance: 1.2, Change: 1.0},
+				{
+					Date: monthYear(nextMonth),
+					Balance: 2.2,
+					Change: 0,
+					SummaryOps: []SummaryOp{
+						{Index: 0, Operation: NewOperation(Balance, 2.2, nextMonth)},
+					},
+				},
+				{
+					Date: monthYear(now),
+					Balance: 1.2,
+					Change: 1.0,
+					SummaryOps: []SummaryOp{
+						{Index: 1, Operation: NewOperation(Balance, 1.2, incMin)},
+						{Index: 2, Operation: NewOperation(Deposit, 1.0, now)},
+					},
+				},
 			},
 		},
 		{ // Middle of the month, no balance.
 			ops:  Operations{NewOperation(Deposit, 1.0, now)},
-			summ: Summaries{{Date: monthYear(now), Balance: 0, Change: 1.0}},
+			summ: Summaries{
+				{
+					Date: monthYear(now),
+					Balance: 0,
+					Change: 1.0,
+					SummaryOps: []SummaryOp{
+						{Index: 0, Operation: NewOperation(Deposit, 1.0, now)},
+					},
+				},
+			},
 		},
 		{ // Two balances --> Use the most recent.
 			ops: Operations{
 				NewOperation(Balance, 1.2, incMin),
 				NewOperation(Balance, 2.2, now),
 			},
-			summ: Summaries{{Date: monthYear(now), Balance: 1.2, Change: 0}},
+			summ: Summaries{
+				{
+					Date: monthYear(now),
+					Balance: 1.2,
+					Change: 0,
+					SummaryOps: []SummaryOp{
+						{Index: 0, Operation: NewOperation(Balance, 1.2, incMin)},
+						{Index: 1, Operation: NewOperation(Balance, 2.2, now)},
+					},
+				},
+			},
 		},
 	}
 	for _, d := range data {
