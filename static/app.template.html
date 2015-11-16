@@ -173,16 +173,15 @@ $(document).ready(function() {
 					<li><i class="fa-li fa fa-bank"></i>{{.Name}}</li>
 					<ul class="fa-ul">
 						{{range .Ops.Summarize}}
-						{{$summId := .Date.Format "2006_01"}}
 						<li> <div id="summarySection">
 							<i class="fa fa-plus-square-o"></i>
-							<a data-toggle="collapse" data-parent="#accordion" href="#summaryops_{{$key}}_{{$summId}}">
+							<a data-toggle="collapse" data-parent="#accordion" href="#summaryops">
 							<script>
 balance = formatCurrency({{.Balance}});
 change = formatCurrency({{.Change}});
 document.write("{{.Date.Format "2006/01"}} Balance:" + balance + " Change:" + change);
 							</script></a>
-							<div id="summaryops_{{$key}}_{{$summId}}" class="panel-collapse collapse">
+							<div id="summaryops" class="panel-collapse collapse">
 								<ul>
 								{{range .SummaryOps}}
 									<form method="post" action="op" class="pure-form">
