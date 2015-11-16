@@ -11,9 +11,11 @@ import (
 
 func IsUserAllowed(u *user.User) bool {
 	if os.Getenv("RUN_WITH_DEVAPPSERVER") == "1" {
-		return u.Email == AllowedTestUser
+		_, ok := AllowedTestUsers[u.Email]
+		return ok
 	}
-	return u.Email == AllowedUser
+	_, ok := AllowedUsers[u.Email]
+	return ok
 }
 
 var notAllowedTemplate = template.Must(template.ParseFiles("static/not_allowed.template.html"))
