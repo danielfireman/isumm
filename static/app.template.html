@@ -2,7 +2,8 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-
+		<!-- Bootstrap min is required for collapse -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.min.css">
 		<!-- Pure CSS -->
 		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 		<!--[if lte IE 8]>
@@ -23,6 +24,7 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot.tooltip/0.8.5/jquery.flot.tooltip.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 function formatNumber(n, preSymbol, postSymbol) {
 	nStr = preSymbol + ' ' + n;
@@ -79,7 +81,14 @@ irateChartOptions.yaxis =  {
 $(document).ready(function() {
 	$.plot("#summChart", amountSummaryData, aSummaryOptions);
 	$.plot("#irateChart", interestRateData, irateChartOptions);
-});
+	// Changing icons of collapsible summaries.
+	$('#summarySection').on('shown.bs.collapse', function () {
+	   $(".collapsible").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
+	});
+	$('#summarySection').on('hidden.bs.collapse', function () {
+	   $(".collapsible").removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
+	});
+});   
 		</script>
 	</head>
 	<body>
@@ -163,8 +172,7 @@ $(document).ready(function() {
 				</div>
 			</div>
 		</div>
-
-		<div class="pure-g">
+		<div class="pure-g" id="accordion">
 			<div class="pure-u-1">
 				{{range .Investments}}
 				{{$key := .Key}}
@@ -172,16 +180,17 @@ $(document).ready(function() {
 					<li><i class="fa-li fa fa-bank"></i>{{.Name}}</li>
 					<ul class="fa-ul">
 						{{range .Ops.Summarize}}
-						<li>
-							<i class="fa-li fa fa-bar-chart"></i>
+						<li> <div id="summarySection">
+							<i class="collapsible fa fa-plus-square-o"></i>
+							<a data-toggle="collapse" data-parent="#accordion" href="#summaryops">
 							<script>
 balance = formatCurrency({{.Balance}});
 change = formatCurrency({{.Change}});
-document.write("{{.Date.Format "2006/01"}} || Balance:" + balance + " || Change:" + change);
-							</script>
-							<ul>
+document.write("{{.Date.Format "2006/01"}} Balance:" + balance + " Change:" + change);
+							</script></a>
+							<div id="summaryops" class="panel-collapse collapse">
+								<ul>
 								{{range .SummaryOps}}
-								<li>
 									<form method="post" action="op" class="pure-form">
 										<input type="hidden" name="inv" value="{{$key}}">
 										<input type="hidden" name="action" value="d">
@@ -189,12 +198,13 @@ document.write("{{.Date.Format "2006/01"}} || Balance:" + balance + " || Change:
 										<button type="submit" class="pure-button"><i class="fa fa-trash-o"></i></button>
 										<script>
 value = formatCurrency({{.Operation.Value}});
-document.write("<span>{{.Operation.Date.Format "2006-01-02"}} || {{.Operation.Type}}: " + value + "</span>");
+document.write("<span>{{.Operation.Date.Format "2006-01-02"}} {{.Operation.Type}} " + value + "</span>");
 										</script>
 									</form>
-								</li>
-								{{end}}
-							</ul>
+									{{end}}
+								</ul>
+							</div>
+							</div>
 						</li>
 						{{end}}
 					</ul>
