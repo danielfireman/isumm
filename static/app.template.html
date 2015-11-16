@@ -179,7 +179,7 @@ balance = formatCurrency({{.Balance}});
 change = formatCurrency({{.Change}});
 document.write("{{.Date.Format "2006/01"}} || Balance:" + balance + " || Change:" + change);
 							</script>
-							<ul class="fa-ul">
+							<ul>
 								{{range .SummaryOps}}
 								<li>
 									<form method="post" action="op" class="pure-form">
