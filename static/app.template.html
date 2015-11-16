@@ -162,26 +162,6 @@ $(document).ready(function() {
 					</form>
 				</div>
 			</div>
-
-			<div class="pure-u-1 pure-u-md-1-3">
-				<div class="operation-container">
-					<form action="listops" method="post" class="pure-form pure-form-aligned">
-						<fieldset>
-							<legend>List Operations</legend>
-							<select name="inv" class="pure-input-1-2" required>
-								<option value="">Investment</option>
-								{{range .Investments}}
-								<option value="{{.Key}}">{{.Name}}</option>
-								{{end}}
-							</select>
-							<button type="submit" name="action" class="pure-button pure-input-1-2 pure-button-primary">
-								<i class="fa fa-list"></i>
-								List
-							</button>
-						</fieldset>
-					</form>
-				</div>
-			</div>
 		</div>
 
 		<div class="pure-g">
