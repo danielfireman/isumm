@@ -140,6 +140,10 @@ func (ops Operations) Summarize() Summaries {
 		// other libraries support it natively). So, setting the day to
 		// the first day of the month.
 		summ.Date = monthYear(op.Date())
+		// We aggregate the operations for that month as part of the Operations
+		// field, which allows us to show a nice log of everything affecting that
+		// month.
+		summ.SummaryOps = append(summ.SummaryOps, SummaryOp{Index: i, Operation: op})
 		switch op.Type {
 		case Withdrawal:
 			summ.Change -= op.Value
@@ -153,10 +157,6 @@ func (ops Operations) Summarize() Summaries {
 				summ.Balance = op.Value
 			}
 		}
-		// We aggregate the operations for that month as part of the Operations
-		// field, which allows us to show a nice log of everything affecting that
-		// month.
-		summ.SummaryOps = append(summ.SummaryOps, SummaryOp{Index: i, Operation: op})
 	}
 	// We must not forget the latest summary.
 	if len(ops) > 0 {
