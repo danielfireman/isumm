@@ -81,6 +81,14 @@ irateChartOptions.yaxis =  {
 $(document).ready(function() {
 	$.plot("#summChart", amountSummaryData, aSummaryOptions);
 	$.plot("#irateChart", interestRateData, irateChartOptions);
+
+  // Changing icons of collapsible summaries.
+  $('.summarySection').on('shown.bs.collapse', function () {
+    $(".summarySection:has([aria-expanded='true']) i.collapsible").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
+  });
+  $('.summarySection').on('hidden.bs.collapse', function () {
+    $(".summarySection:has([aria-expanded='false']) i.collapsible").removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
+  });
 });   
 		</script>
 	</head>
@@ -174,30 +182,32 @@ $(document).ready(function() {
 					<ul class="fa-ul">
 						{{range .Ops.Summarize}}
 						{{$summId := .Date.Format "2006_01"}}
-						<li> <div id="summarySection">
-							<i class="fa fa-plus-square-o"></i>
-							<a data-toggle="collapse" data-parent="#accordion" href="#summaryops_{{$key}}_{{$summId}}">
-							<script>
+						<li>
+							<div class="summarySection">
+								<i class="collapsible fa fa-plus-square-o"></i>
+								<a data-toggle="collapse" data-parent="#accordion" href="#summaryops_{{$key}}_{{$summId}}">
+									<script>
 balance = formatCurrency({{.Balance}});
 change = formatCurrency({{.Change}});
 document.write("{{.Date.Format "2006/01"}}: " + balance + " :: " + change);
-							</script></a>
-							<div id="summaryops_{{$key}}_{{$summId}}" class="panel-collapse collapse">
-								<ul>
-								{{range .SummaryOps}}
-									<form method="post" action="op" class="pure-form">
-										<input type="hidden" name="inv" value="{{$key}}">
-										<input type="hidden" name="action" value="d">
-										<input type="hidden" name="index" value="{{.Index}}">
-										<button type="submit" class="pure-button"><i class="fa fa-trash-o"></i></button>
-										<script>
+									</script>
+								</a>
+								<div id="summaryops_{{$key}}_{{$summId}}" class="panel-collapse collapse">
+									<ul>
+										{{range .SummaryOps}}
+										<form method="post" action="op" class="pure-form">
+											<input type="hidden" name="inv" value="{{$key}}">
+											<input type="hidden" name="action" value="d">
+											<input type="hidden" name="index" value="{{.Index}}">
+											<button type="submit" class="pure-button"><i class="fa fa-trash-o"></i></button>
+											<script>
 value = formatCurrency({{.Operation.Value}});
 document.write("<span>{{.Operation.Date.Format "2006-01-02"}} {{.Operation.Type}} " + value + "</span>");
-										</script>
-									</form>
-									{{end}}
-								</ul>
-							</div>
+											</script>
+										</form>
+										{{end}}
+									</ul>
+								</div>
 							</div>
 						</li>
 						{{end}}
