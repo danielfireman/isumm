@@ -7,6 +7,8 @@ const (
 // Those are essentially sets.
 var AllowedUsers = map[string]struct{}{
 	"isumm.demo.staging@gmail.com": struct{}{},
+	"danielfireman@gmail.com":      struct{}{},
+	"idnotfound@gmail.com":         struct{}{},
 }
 var AllowedTestUsers = map[string]struct{}{
 	"test@example.com": struct{}{},
