@@ -32,6 +32,9 @@ func App(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Send fire-and-forget register request.
+	go SendRegisterRequest(c)
+
 	investments, err := GetInvestments(c)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
