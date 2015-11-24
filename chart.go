@@ -80,7 +80,7 @@ func AggregateByDate(invs []*Investment) Summaries {
 		last := summs[len(summs)-1]
 		previous := summs[len(summs)-2]
 		if last.Balance == 0 && (previous.Balance+last.Change != 0) {
-			summs = summs[:len(summs)-2]
+			summs = summs[:len(summs)-1]
 		}
 	}
 	return summs
