@@ -9,18 +9,6 @@ import (
 // TimeseriesChart represents a chart where the x-axis is a timeseries.
 type TimeseriesChart []timeSeriesPoint
 
-func (t TimeseriesChart) Len() int {
-	return len(t)
-}
-
-func (t TimeseriesChart) Less(i, j int) bool {
-	return t[i].date.Before(t[j].date)
-}
-
-func (t TimeseriesChart) Swap(i, j int) {
-	t[i], t[j] = t[j], t[i]
-}
-
 // timeSeriesPoint represents a chart point where x-axis is a timeseries.
 // All fields are private because interesting result is the String().
 type timeSeriesPoint struct {
@@ -33,23 +21,36 @@ func (g timeSeriesPoint) String() string {
 }
 
 func AmountSummaryChart(invs []*Investment) TimeseriesChart {
-	balanceByDate := make(map[time.Time]float32)
-	for _, i := range invs {
-		for _, s := range i.Ops.Summarize() {
-			balanceByDate[s.Date] += s.Balance
-		}
-	}
+	summs := AggregateByDate(invs)
 	var chart TimeseriesChart
-	for t, b := range balanceByDate {
-		chart = append(chart, timeSeriesPoint{t, b})
+	for _, s := range summs {
+		chart = append(chart, timeSeriesPoint{s.Date, s.Balance})
 	}
-	// Very important because go map deliberate changes the map interation from
-	// time to time.
-	sort.Sort(chart)
 	return chart
 }
 
 func InterestRateChart(invs []*Investment) TimeseriesChart {
+	summs := AggregateByDate(invs)
+	// Interest rates implies at least two reference points.
+	if len(summs) < 2 {
+		return TimeseriesChart{}
+	}
+	var chart TimeseriesChart
+	for i, s := range summs {
+		t := timeSeriesPoint{date: s.Date}
+		switch {
+		case i == 0:
+			t.value = 0
+		default:
+			t.value = float32(s.Balance-s.Change-summs[i-1].Balance) / float32(s.Change+summs[i-1].Balance) * 100.0
+		}
+		chart = append(chart, t)
+	}
+	return chart
+}
+
+// Returns the aggregated summaries sorted by date.
+func AggregateByDate(invs []*Investment) Summaries {
 	summByDate := make(map[time.Time]Summary)
 	for _, i := range invs {
 		for _, s := range i.Ops.Summarize() {
@@ -64,18 +65,23 @@ func InterestRateChart(invs []*Investment) TimeseriesChart {
 	for _, s := range summByDate {
 		summs = append(summs, s)
 	}
-	// The formula needs sorted summs. More information at: https://github.com/danielfireman/isumm/issues/2
+	// More information at: https://github.com/danielfireman/isumm/issues/2
 	sort.Sort(summs)
-	var chart TimeseriesChart
-	for i, s := range summs {
-		t := timeSeriesPoint{date: s.Date}
-		switch {
-		case i == 0:
-			t.value = 0
-		default:
-			t.value = float32(s.Balance-s.Change-summs[i-1].Balance) / float32(s.Change+summs[i-1].Balance) * 100.0
+	switch len(summs) {
+	case 1:
+		if summs[0].Balance == 0 {
+			// There only one point and it is zero. This probably means that it's the first month the user
+			// and the month hasn't changed.
+			return Summaries{}
 		}
-		chart = append(chart, t)
+	default:
+		// This prevents the corner case where the last month hasn't ended and there already deposits or
+		// widrawals. There is a valid case for that where we have zeroed the balance because of a Widrawal.
+		last := summs[len(summs)-1]
+		previous := summs[len(summs)-2]
+		if last.Balance == 0 && (previous.Balance+last.Change != 0) {
+			summs = summs[:len(summs)-2]
+		}
 	}
-	return chart
+	return summs
 }
