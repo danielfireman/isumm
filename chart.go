@@ -51,6 +51,9 @@ func InterestRateChart(invs []*Investment) TimeseriesChart {
 
 // Returns the aggregated summaries sorted by date.
 func AggregateByDate(invs []*Investment) Summaries {
+	if len(invs) == 0 {
+		return Summaries{}
+	}
 	summByDate := make(map[time.Time]Summary)
 	for _, i := range invs {
 		for _, s := range i.Ops.Summarize() {
@@ -68,6 +71,8 @@ func AggregateByDate(invs []*Investment) Summaries {
 	// More information at: https://github.com/danielfireman/isumm/issues/2
 	sort.Sort(summs)
 	switch len(summs) {
+	case 0:
+		return Summaries{}
 	case 1:
 		if summs[0].Balance == 0 {
 			// There only one point and it is zero. This probably means that it's the first month the user
