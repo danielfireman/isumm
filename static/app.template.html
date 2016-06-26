@@ -30,7 +30,7 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 function formatNumber(n, preSymbol, postSymbol) {
-	nStr = preSymbol + ' ' + n;
+	nStr = preSymbol + ' ' + n.toFixed(2);
 	x = nStr.split('.');
 	x1 = x[0];
 	x2 = x.length > 1 ? '.' + x[1] : '';
