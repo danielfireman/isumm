@@ -28,71 +28,85 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot.tooltip/0.8.5/jquery.flot.tooltip.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="static/app.js"></script>
 		<script type="text/javascript">
-function formatNumber(n, preSymbol, postSymbol) {
-	nStr = preSymbol + ' ' + n.toFixed(2);
-	x = nStr.split('.');
-	x1 = x[0];
-	x2 = x.length > 1 ? '.' + x[1] : '';
-	var rgx = /(\d+)(\d{3})/;
-	while (rgx.test(x1)) {
-		x1 = x1.replace(rgx, '$1' + ',' + '$2');
-	}
-	return x1 + x2 + ' ' + postSymbol;
-}
+			var amountSummaryData = [[{{range .AmountSummaryChart}}{{.}},{{end}}]];
+			var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
+			function formatNumber(n, preSymbol, postSymbol) {
+			  nStr = preSymbol + ' ' + n;
+			  x = nStr.split('.');
+			  x1 = x[0];
+			  x2 = x.length > 1 ? '.' + x[1] : '';
+			  var rgx = /(\d+)(\d{3})/;
+			  while (rgx.test(x1)) {
+			    x1 = x1.replace(rgx, '$1' + ',' + '$2');
+			  }
+			  return x1 + x2 + ' ' + postSymbol;
+			}
 
-function formatCurrency(n) {
-	return formatNumber(n, '{{.Currency}}', '')
-}
+			function formatCurrency(n) {
+			  return formatNumber(n, '{{.Currency}}', '')
+			}
 
-function formatPercent(n) {
-	return formatNumber(n, '', '%')
-}
-var amountSummaryData = [[{{range .AmountSummaryChart}}{{.}},{{end}}]];
-var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
-var options = {
-	series: {
-		shadowSize: 5,
-		points: { show: true },
-		lines: {show: true},
-	},
-	grid: { 
-		hoverable: true, 
-		clickable: true,
-	},
-	legend: {
-		position: "nw",
-	},
-	xaxis: {
-		mode: "time",
-		timeformat: "%m/%Y",
-		tickSize: [1, "month"],
-	},
-	tooltip : true,
-};
-aSummaryOptions = JSON.parse(JSON.stringify(options))
-aSummaryOptions.yaxis =  {
-	tickFormatter: formatCurrency,
-	axisLabel: "Total Amount ({{.Currency}})",
-},
-irateChartOptions = JSON.parse(JSON.stringify(options))
-irateChartOptions.yaxis =  {
-	tickSize: 0.25,
-	tickFormatter: formatPercent,
-	axisLabel: "Interest Rate (%)",
-}
-$(document).ready(function() {
-	$.plot("#summChart", amountSummaryData, aSummaryOptions);
-	$.plot("#irateChart", interestRateData, irateChartOptions);
+			function formatPercent(n) {
+			  return formatNumber(n, '', '%')
+			}
 
-  // Changing icons of collapsible summaries.
-  $('.summarySection').on('shown.bs.collapse', function () {
-    $(".summarySection:has([aria-expanded='true']) i.collapsible").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
-  });
-  $('.summarySection').on('hidden.bs.collapse', function () {
-    $(".summarySection:has([aria-expanded='false']) i.collapsible").removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
-  });
-});   
+			var options = {
+			  series: {
+			    shadowSize: 5,
+			    points: { show: true },
+			    lines: { show: true },
+			  },
+			  grid: {
+			    hoverable: true,
+			    clickable: true,
+			  },
+			  legend: {
+			    position: "nw",
+			  },
+			  xaxis: {
+			    mode: "time",
+			    timeformat: "%m/%Y",
+			    tickSize: [1, "month"],
+			  },
+			  tooltip : true,
+			};
+
+			aSummaryOptions = JSON.parse(JSON.stringify(options))
+			aSummaryOptions.yaxis =  {
+			  tickFormatter: formatCurrency,
+			  axisLabel: "Total Amount ({{.Currency}})",
+			},
+			irateChartOptions = JSON.parse(JSON.stringify(options))
+			irateChartOptions.yaxis =  {
+			  tickSize: 0.25,
+			  tickFormatter: formatPercent,
+			  axisLabel: "Interest Rate (%)",
+			}
+			$(document).ready(function() {
+			  $.plot("#summChart", amountSummaryData, aSummaryOptions);
+			  $.plot("#irateChart", interestRateData, irateChartOptions);
+
+			  // Changing icons of collapsible summaries.
+			  $('.summarySection').on('shown.bs.collapse', function () {
+			    $(".summarySection:has([aria-expanded='true']) i.collapsible").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
+			  });
+			  $('.summarySection').on('hidden.bs.collapse', function () {
+			    $(".summarySection:has([aria-expanded='false']) i.collapsible").removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
+			  });
+			});
+			$(document).ready( function() {
+					var now = new Date();
+					var day = now.getDate();
+					var month = (now.getMonth() + 1);
+					if(month < 10)
+							month = "0" + month;
+					if(day < 10)
+							day = "0" + day;
+					var today = now.getFullYear() + '-' + month + '-' + day;
+					$('#datePicker').val(today);
+			});
 		</script>
 	</head>
 	<body>
@@ -140,7 +154,7 @@ $(document).ready(function() {
 							</select>
 
 							<input name="value" type="text" size="10" class="pure-input-1" placeholder="Value" required>
-							<input name="date" type="date" class="pure-input-1" placeholder="Date" required>
+							<input id="datePicker" name="date" type="date" class="pure-input-1" required>
 
 							<button type="submit" name="action" class="pure-button pure-input-1 pure-button-primary">
 								<i class="fa fa-plus"></i>
@@ -162,7 +176,7 @@ $(document).ready(function() {
 								<option value="{{.Key}}">{{.Name}}</option>
 								{{end}}
 							</select>
-							<input name="name" type="text" size="15" class="pure-input-1" placeholder="Name">						 
+							<input name="name" type="text" size="15" class="pure-input-1" placeholder="Name">
 							<button type="submit" name="action" value="ae" class="pure-button pure-input-1 pure-button-primary">
 								<i class="fa fa-edit"></i>
 								New/Edit
@@ -190,9 +204,9 @@ $(document).ready(function() {
 								<i class="collapsible fa fa-plus-square-o"></i>
 								<a data-toggle="collapse" data-parent="#accordion" href="#summaryops_{{$key}}_{{$summId}}">
 									<script>
-balance = formatCurrency({{.Balance}});
-change = formatCurrency({{.Change}});
-document.write("{{.Date.Format "2006/01"}}: " + balance + " :: " + change);
+										balance = formatCurrency({{.Balance}});
+										change = formatCurrency({{.Change}});
+										document.write("{{.Date.Format "2006/01"}}: " + balance + " :: " + change);
 									</script>
 								</a>
 								<div id="summaryops_{{$key}}_{{$summId}}" class="panel-collapse collapse">
