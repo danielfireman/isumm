@@ -28,11 +28,12 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot.tooltip/0.8.5/jquery.flot.tooltip.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js"></script>
 		<script type="text/javascript">
 var amountSummaryData = [[{{range .AmountSummaryChart}}{{.}},{{end}}]];
 var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
 function formatNumber(n, preSymbol, postSymbol) {
-  nStr = preSymbol + ' ' + n;
+  nStr = preSymbol + ' ' + n.toFixed(2);
   x = nStr.split('.');
   x1 = x[0];
   x2 = x.length > 1 ? '.' + x[1] : '';
@@ -75,13 +76,13 @@ var options = {
 aSummaryOptions = JSON.parse(JSON.stringify(options))
 aSummaryOptions.yaxis =  {
   tickFormatter: formatCurrency,
-  axisLabel: "Total Amount ({{.Currency}})",
+  axisLabel: "Valor Total ({{.Currency}})",
 },
 irateChartOptions = JSON.parse(JSON.stringify(options))
 irateChartOptions.yaxis =  {
   tickSize: 0.25,
   tickFormatter: formatPercent,
-  axisLabel: "Interest Rate (%)",
+  axisLabel: "Taxa de Juros (%)",
 }
 $(document).ready(function() {
   $.plot("#summChart", amountSummaryData, aSummaryOptions);
@@ -97,10 +98,12 @@ $(document).ready(function() {
 });
 $(document).ready( function() {
 	var now = new Date();
-	var day = now.getDate();
-	var month = (now.getMonth() + 1);
+	// The two-digit day and month are needed due to time conversion formatting templates.
 	var today = now.getFullYear() + '-' + ('0' + (now.getMonth()+1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
 	$('#datePicker').val(today);
+});
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
 });
 		</script>
 	</head>
@@ -110,7 +113,7 @@ $(document).ready( function() {
 				<div class="operation-container">
 					<form method="post" class="pure-form pure-form-aligned">
 						<fieldset class="pure-group">
-							<legend>Interest Rate</legend>
+							<legend>Taxa de Juros</legend>
 							<div id="irateChart"></div>
 						</fieldset>
 					</form>
@@ -120,7 +123,7 @@ $(document).ready( function() {
 				<div class="operation-container">
 					<form method="post" class="pure-form pure-form-aligned">
 						<fieldset class="pure-group">
-							<legend>Total Amount</legend>
+							<legend>Valor Total</legend>
 							<div id="summChart"></div>
 						</fieldset>
 					</form>
@@ -132,28 +135,28 @@ $(document).ready( function() {
 				<div class="operation-container">
 					<form action="op" method="post" class="pure-form pure-form-aligned">
 						<fieldset class="pure-group">
-							<legend>Add Operation</legend>
+							<legend>Adicionar Operação</legend>
 
 							<select name="type" class="pure-input-1" required>
-								<option value="">Type</option>
-								<option value="1">Balance</option>
-								<option value="2">Deposit</option>
-								<option value="3">Withdrawal</option>
+								<option value="">Operação</option>
+								<option value="1">Balanço</option>
+								<option value="2">Aporte</option>
+								<option value="3">Retirada</option>
 							</select>
 
 							<select name="inv" class="pure-input-1" required>
-								<option value="">Investment</option>
+								<option value="">Investimento</option>
 								{{range .Investments}}
 								<option value="{{.Key}}">{{.Name}}</option>
 								{{end}}
 							</select>
 
-							<input name="value" type="text" size="10" class="pure-input-1" placeholder="Value" required>
+							<input name="value" type="text" size="10" class="pure-input-1" placeholder="Valor" required>
 							<input id="datePicker" name="date" type="date" class="pure-input-1" required>
 
 							<button type="submit" name="action" class="pure-button pure-input-1 pure-button-primary">
 								<i class="fa fa-plus"></i>
-								Add
+								Adicionar
 							</button>
 						</fieldset>
 					</form>
@@ -164,21 +167,21 @@ $(document).ready( function() {
 				<div class="operation-container">
 					<form action="inv" method="post" class="pure-form pure-form-aligned">
 						<fieldset>
-							<legend>Investments</legend>
+							<legend>Investimentos</legend>
 							<select name="key" class="pure-input-1">
-								<option value="">Investment</option>
+								<option value="">Investimento</option>
 								{{range .Investments}}
 								<option value="{{.Key}}">{{.Name}}</option>
 								{{end}}
 							</select>
-							<input name="name" type="text" size="15" class="pure-input-1" placeholder="Name">
+							<input name="name" type="text" size="15" class="pure-input-1" placeholder="Nome">
 							<button type="submit" name="action" value="ae" class="pure-button pure-input-1 pure-button-primary">
 								<i class="fa fa-edit"></i>
-								New/Edit
+								Novo/Editar
 							</button>
 							<button type="submit" name="action" value="d" class="pure-button pure-input-1">
 								<i class="fa fa-trash-o"></i>
-								Delete
+								Remover
 							</button>
 						</fieldset>
 					</form>
@@ -193,7 +196,7 @@ $(document).ready( function() {
 					<li><i class="fa-li fa fa-bank"></i>{{.Name}}</li>
 					<ul class="fa-ul">
 						{{range .Ops.Summarize}}
-						{{$summId := .Date.Format "2006_01"}}
+						{{$summId := .Date.Format "01_2006"}}
 						<li>
 							<div class="summarySection">
 								<i class="collapsible fa fa-plus-square-o"></i>
@@ -201,7 +204,7 @@ $(document).ready( function() {
 									<script>
 balance = formatCurrency({{.Balance}});
 change = formatCurrency({{.Change}});
-document.write("{{.Date.Format "2006/01"}}: " + balance + " :: " + change);
+document.write("{{.Date.Format "01/2006"}}: " + balance + " :: " + change);
 									</script>
 								</a>
 								<div id="summaryops_{{$key}}_{{$summId}}" class="panel-collapse collapse">
@@ -211,10 +214,10 @@ document.write("{{.Date.Format "2006/01"}}: " + balance + " :: " + change);
 											<input type="hidden" name="inv" value="{{$key}}">
 											<input type="hidden" name="action" value="d">
 											<input type="hidden" name="index" value="{{.Index}}">
-											<button type="submit" class="pure-button"><i class="fa fa-trash-o"></i></button>
+											<button type="submit" class="pure-button" data-toggle="tooltip" data-placement="bottom" title="Remover"><i class="fa fa-trash-o"></i></button>
 											<script>
 value = formatCurrency({{.Operation.Value}});
-document.write("<span>{{.Operation.Date.Format "2006-01-02"}} {{.Operation.Type}} " + value + "</span>");
+document.write("<span>{{.Operation.Date.Format "02/01/2006"}} {{.Operation.Type}} " + value + "</span>");
 											</script>
 										</form>
 										{{end}}
