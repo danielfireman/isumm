@@ -78,19 +78,27 @@ $(document).ready(function() {
     legend: {
       position: "nw",
     },
-    xaxis: {
-      mode: "time",
-      timeformat: "%m/%Y",
-      tickSize: [1, "month"],
-    },
     tooltip : true,
   };
+
+  xaxis = {
+    mode: "time",
+    timeformat: "%m/%Y",
+    ticks: function(axis){
+  	  genAxis = axis.tickGenerator(axis);
+      if (genAxis.length > 4) {
+        return [genAxis[0], genAxis[genAxis.length/2], genAxis[genAxis.length-1]]
+	  }
+	  return genAxis
+    },
+  }
 
   aSummaryOptions = JSON.parse(JSON.stringify(options))
   aSummaryOptions.yaxis =  {
     tickFormatter: formatCurrency,
     axisLabel: "Valor Total (R$)",
   }
+  aSummaryOptions.xaxis = xaxis
   var amountSummaryData = [[{{range .AmountSummaryChart}}{{.}},{{end}}]];
   $.plot("#summChart", amountSummaryData, aSummaryOptions);
 
@@ -99,6 +107,7 @@ $(document).ready(function() {
     tickFormatter: formatPercent,
     axisLabel: "Rentabilidade Mensal (%)",
   }
+  irateChartOptions.xaxis = xaxis
   var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
   $.plot("#irateChart", interestRateData, irateChartOptions);
 });
