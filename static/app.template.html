@@ -99,13 +99,7 @@ $(document).ready( function() {
 	var now = new Date();
 	var day = now.getDate();
 	var month = (now.getMonth() + 1);
-	if(month < 10) {
-		month += month;
-	}
-	if(day < 10) {
-		day += day;
-	}
-	var today = now.getFullYear() + '-' + month + '-' + day;
+	var today = now.getFullYear() + '-' + ('0' + (now.getMonth()+1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
 	$('#datePicker').val(today);
 });
 		</script>
