@@ -4,7 +4,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 
-		<!-- Bootstrap min is required for collapse -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.min.css">
 
 		<!-- Pure CSS -->
@@ -29,83 +28,93 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/flot.tooltip/0.8.5/jquery.flot.tooltip.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js"></script>
-		<script type="text/javascript">
-var amountSummaryData = [[{{range .AmountSummaryChart}}{{.}},{{end}}]];
-var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
-function formatNumber(n, preSymbol, postSymbol) {
-  nStr = preSymbol + ' ' + n.toFixed(2);
-  x = nStr.split('.');
-  x1 = x[0];
-  x2 = x.length > 1 ? '.' + x[1] : '';
-  var rgx = /(\d+)(\d{3})/;
-  while (rgx.test(x1)) {
-    x1 = x1.replace(rgx, '$1' + ',' + '$2');
-  }
-  return x1 + x2 + ' ' + postSymbol;
-}
+		<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js"></script>
+
+<script type="text/javascript">
+// Loading language.
+// Extracted from github.com/adamwdraper/Numeral-js/blob/master/languages/pt-br.js
+numeral.language('pt-br', {
+  delimiters: {
+    thousands: '.',
+    decimal: ','
+  },
+  abbreviations: {
+    thousand: 'mil',
+    million: 'milhões',
+    billion: 'b',
+    trillion: 't'
+  },
+  ordinal: function (number) {
+    return 'º';
+  },
+  currency: {
+    symbol: 'R$'
+  },
+})
+
+// Setting language and default currency formatter.
+numeral.language('pt-br')
 
 function formatCurrency(n) {
-  return formatNumber(n, '{{.Currency}}', '')
+  return numeral(n.toFixed(2)).format('$ 0.0,00').slice(0, -2)
 }
 
 function formatPercent(n) {
-  return formatNumber(n, '', '%')
+  return numeral(n.toFixed(2)).format('0.0,00').slice(0, -2) + ' %'
 }
 
-var options = {
-  series: {
-    shadowSize: 5,
-    points: { show: true },
-    lines: { show: true },
-  },
-  grid: {
-    hoverable: true,
-    clickable: true,
-  },
-  legend: {
-    position: "nw",
-  },
-  xaxis: {
-    mode: "time",
-    timeformat: "%m/%Y",
-    tickSize: [1, "month"],
-  },
-  tooltip : true,
-};
-
-aSummaryOptions = JSON.parse(JSON.stringify(options))
-aSummaryOptions.yaxis =  {
-  tickFormatter: formatCurrency,
-  axisLabel: "Valor Total",
-},
-irateChartOptions = JSON.parse(JSON.stringify(options))
-irateChartOptions.yaxis =  {
-  tickSize: 0.25,
-  tickFormatter: formatPercent,
-  axisLabel: "Rentabilidade Mensal (%)",
-}
+// Plotting charts
 $(document).ready(function() {
-  $.plot("#summChart", amountSummaryData, aSummaryOptions);
-  $.plot("#irateChart", interestRateData, irateChartOptions);
+  var options = {
+    series: {
+      shadowSize: 5,
+      points: { show: true },
+      lines: { show: true },
+    },
+    grid: {
+      hoverable: true,
+      clickable: true,
+    },
+    legend: {
+      position: "nw",
+    },
+    xaxis: {
+      mode: "time",
+      timeformat: "%m/%Y",
+      tickSize: [1, "month"],
+    },
+    tooltip : true,
+  };
 
-  // Changing icons of collapsible summaries.
-  $('.summarySection').on('shown.bs.collapse', function () {
-    $(".summarySection:has([aria-expanded='true']) i.collapsible").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
-  });
-  $('.summarySection').on('hidden.bs.collapse', function () {
-    $(".summarySection:has([aria-expanded='false']) i.collapsible").removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
-  });
+  aSummaryOptions = JSON.parse(JSON.stringify(options))
+  aSummaryOptions.yaxis =  {
+    tickFormatter: formatCurrency,
+    axisLabel: "Valor Total (R$)",
+  }
+  var amountSummaryData = [[{{range .AmountSummaryChart}}{{.}},{{end}}]];
+  $.plot("#summChart", amountSummaryData, aSummaryOptions);
+
+  irateChartOptions = JSON.parse(JSON.stringify(options))
+  irateChartOptions.yaxis =  {
+    tickFormatter: formatPercent,
+    axisLabel: "Rentabilidade Mensal (%)",
+  }
+  var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
+  $.plot("#irateChart", interestRateData, irateChartOptions);
 });
-$(document).ready( function() {
+
+// Default value for date-picker.
+$(document).ready(function() {
 	var now = new Date();
 	// The two-digit day and month are needed due to time conversion formatting templates.
 	var today = now.getFullYear() + '-' + ('0' + (now.getMonth()+1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
 	$('#datePicker').val(today);
 });
+
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 });
-		</script>
+</script>
 	</head>
 	<body>
 		<div class="pure-g">
@@ -199,15 +208,12 @@ $(document).ready(function(){
 						{{$summId := .Date.Format "01_2006"}}
 						<li>
 							<div class="summarySection">
-								<i class="collapsible fa fa-plus-square-o"></i>
-								<a data-toggle="collapse" data-parent="#accordion" href="#summaryops_{{$key}}_{{$summId}}">
-									<script>
+								<script>
 balance = formatCurrency({{.Balance}});
 change = formatCurrency({{.Change}});
-document.write("{{.Date.Format "01/2006"}}: " + balance + " :: " + change);
-									</script>
-								</a>
-								<div id="summaryops_{{$key}}_{{$summId}}" class="panel-collapse collapse">
+document.write("{{.Date.Format "01/2006"}}: Saldo:" + balance + " :: Aportes-Saques:" + change);
+								</script>
+								<div id="summaryops_{{$key}}_{{$summId}}">
 									<ul>
 										{{range .SummaryOps}}
 										<form method="post" action="op" class="pure-form">

@@ -12,7 +12,6 @@ var appTemplate = template.Must(template.ParseFiles("static/app.template.html"))
 
 type appParams struct {
 	User               string
-	Currency           string
 	LogoutURL          string
 	Investments        []*Investment
 	AmountSummaryChart TimeseriesChart
@@ -42,7 +41,6 @@ func App(w http.ResponseWriter, r *http.Request) {
 	}
 	params := appParams{
 		User:               u.String(),
-		Currency:           Currency,
 		LogoutURL:          logoutUrl,
 		Investments:        investments,
 		AmountSummaryChart: AmountSummaryChart(investments),
