@@ -76,13 +76,13 @@ var options = {
 aSummaryOptions = JSON.parse(JSON.stringify(options))
 aSummaryOptions.yaxis =  {
   tickFormatter: formatCurrency,
-  axisLabel: "Valor Total ({{.Currency}})",
+  axisLabel: "Valor Total",
 },
 irateChartOptions = JSON.parse(JSON.stringify(options))
 irateChartOptions.yaxis =  {
   tickSize: 0.25,
   tickFormatter: formatPercent,
-  axisLabel: "Taxa de Juros (%)",
+  axisLabel: "Rentabilidade Mensal (%)",
 }
 $(document).ready(function() {
   $.plot("#summChart", amountSummaryData, aSummaryOptions);
@@ -113,7 +113,7 @@ $(document).ready(function(){
 				<div class="operation-container">
 					<form method="post" class="pure-form pure-form-aligned">
 						<fieldset class="pure-group">
-							<legend>Taxa de Juros</legend>
+							<legend>Rentabilidade Mensal</legend>
 							<div id="irateChart"></div>
 						</fieldset>
 					</form>
@@ -139,7 +139,7 @@ $(document).ready(function(){
 
 							<select name="type" class="pure-input-1" required>
 								<option value="">Operação</option>
-								<option value="1">Balanço</option>
+								<option value="1">Saldo</option>
 								<option value="2">Aporte</option>
 								<option value="3">Retirada</option>
 							</select>
