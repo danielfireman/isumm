@@ -85,11 +85,13 @@ $(document).ready(function() {
     mode: "time",
     timeformat: "%m/%Y",
     ticks: function(axis){
-  	  genAxis = axis.tickGenerator(axis);
-      if (genAxis.length > 4) {
-        return [genAxis[0], genAxis[genAxis.length/2], genAxis[genAxis.length-1]]
-	  }
-	  return genAxis
+      genAxis = axis.tickGenerator(axis);
+      if (genAxis.length > 5) {
+	  var midIndex = ~~(genAxis.length/2)
+	  var half = ~~(midIndex/2)
+          return [genAxis[0], genAxis[midIndex-half], genAxis[midIndex], genAxis[midIndex+half], genAxis[genAxis.length-1]]
+	}
+        return genAxis
     },
   }
 
