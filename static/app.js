@@ -30,6 +30,19 @@ function formatPercent(n) {
   return numeral(n.toFixed(2)).format('0.0,00').slice(0, -2) + ' %'
 }
 
+function operationType(type){
+  switch(type) {
+    case "Balance":
+        return "Saldo";
+        break;
+    case "Deposit":
+        return "Aporte";
+        break;
+    case "Withdrawal":
+        return "Retirada";
+        break;
+  }
+}
 // Plotting charts
 $(document).ready(function() {
   var options = {
@@ -83,8 +96,8 @@ $(document).ready(function() {
 $(document).ready(function() {
 	var now = new Date();
 	// The two-digit day and month are needed due to time conversion formatting templates.
-	var today = now.getFullYear() + '-' + ('0' + (now.getMonth()+1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
-	$('#datePicker').val(today);
+  var today = ('0' + now.getDate()).slice(-2) + '/' + ('0' + (now.getMonth()+1)).slice(-2) + '/' + now.getFullYear();
+  $('#datePicker').val(today);
 });
 
 $(document).ready(function(){
@@ -100,5 +113,5 @@ $(document).ready(function(){
 });
 
 $(function() {
-     $("#datePicker").datepicker({ dateFormat: 'yy-mm-dd'});
+     $("#datePicker").datepicker({ dateFormat: 'dd/mm/yy'});
 });

@@ -152,7 +152,8 @@ document.write("{{.Date.Format "01/2006"}}: Saldo:" + balance + " :: Aportes-Saq
 											<button type="submit" class="pure-button" data-toggle="tooltip" data-placement="bottom" title="Remover"><i class="fa fa-trash-o"></i></button>
 											<script>
 value = formatCurrency({{.Operation.Value}});
-document.write("<span>{{.Operation.Date.Format "02/01/2006"}} {{.Operation.Type}} " + value + "</span>");
+type = operationType("{{.Operation.Type}}");
+document.write("<span>{{.Operation.Date.Format "02/01/2006"}} "+ type +" " + value + "</span>");
 											</script>
 										</form>
 										{{end}}

@@ -14,7 +14,7 @@ var (
 	incMin    = now.Add(10 * time.Minute)
 	opType    = "1"
 	value     = "12"
-	date      = "2006-01-02"
+	date      = "02/01/2016"
 )
 
 func TestSort(t *testing.T) {
