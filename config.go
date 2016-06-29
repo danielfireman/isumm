@@ -10,7 +10,7 @@ var AllowedUsers = map[string]struct{}{
 	"danielfireman@gmail.com":      struct{}{},
 	"contato@diasbruno.com":        struct{}{},
 	"idnotfound@gmail.com":         struct{}{},
-	"marcorosner@gmail.com":        struct{}{},
+	"marco.rosner@gmail.com":        struct{}{},
 }
 var AllowedTestUsers = map[string]struct{}{
 	"test@example.com": struct{}{},
