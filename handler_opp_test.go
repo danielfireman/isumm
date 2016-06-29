@@ -12,8 +12,8 @@ import (
 const (
 	typeStr        = "1"
 	valueStr       = "2.23"
-	dateStr        = "2015-12-30"
-	firstOpDateStr = "2015-12-31"
+	dateStr        = "30/12/2015"
+	firstOpDateStr = "31/12/2015"
 )
 
 func TestOpHandler_AddSucess(t *testing.T) {
