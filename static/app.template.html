@@ -122,7 +122,7 @@ $(document).ready(function() {
 $(document).ready(function() {
 	var now = new Date();
 	// The two-digit day and month are needed due to time conversion formatting templates.
-	var today = ('0' + now.getDate()).slice(-2) + '/' + ('0' + (now.getMonth()+1)).slice(-2) + '/' + now.getFullYear();
+	var today = now.getFullYear() + '-' + ('0' + (now.getMonth()+1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
 	$('#datePicker').val(today);
 });
 
@@ -139,7 +139,7 @@ $(document).ready(function(){
 });
 
 $(function() {
-     $("#datePicker").datepicker({ dateFormat: 'dd/mm/yy'}); 
+     $("#datePicker").datepicker({ dateFormat: 'yy-mm-dd'}); 
 });
 
 </script>
