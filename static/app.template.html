@@ -67,6 +67,20 @@ function formatPercent(n) {
   return numeral(n.toFixed(2)).format('0.0,00').slice(0, -2) + ' %'
 }
 
+function operationType(type){
+	switch(type) {
+    case "Balance":
+        return "Saldo";
+        break;
+    case "Deposit":
+        return "Aporte";
+        break;
+    case "Withdrawal":
+        return "Retirada";
+        break;
+} 
+}
+
 // Plotting charts
 $(document).ready(function() {
   var options = {
@@ -240,7 +254,8 @@ document.write("{{.Date.Format "01/2006"}}: Saldo:" + balance + " :: Aportes-Saq
 											<button type="submit" class="pure-button" data-toggle="tooltip" data-placement="bottom" title="Remover"><i class="fa fa-trash-o"></i></button>
 											<script>
 value = formatCurrency({{.Operation.Value}});
-document.write("<span>{{.Operation.Date.Format "02/01/2006"}} {{.Operation.Type}} " + value + "</span>");
+type = operationType("{{.Operation.Type}}");
+document.write("<span>{{.Operation.Date.Format "02/01/2006"}} "+ type +" " + value + "</span>");
 											</script>
 										</form>
 										{{end}}
