@@ -4,16 +4,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 
+		<!-- Bootstrap4 CSS -->
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.min.css">
-
-		<!-- Pure CSS -->
-		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/pure-min.css">
-		<!--[if lte IE 8]>
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-old-ie-min.css">
-		<![endif]-->
-		<!--[if gt IE 8]><!-->
-		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-min.css">
-		<!--<![endif]-->
 
 		<!-- jQuery ui -->
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css">
@@ -46,88 +38,87 @@ var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
 </script>
 	</head>
 	<body>
-		<div class="pure-g">
-			<div class="pure-u-1 pure-u-md-1-3">
-				<div class="operation-container">
-					<form method="post" class="pure-form pure-form-aligned">
-						<fieldset class="pure-group">
+		<div class="container-fluid">
+			<div class="col-sm-4">
+					<form method="post">
+						<div class="form-group">
 							<legend>Rentabilidade Mensal</legend>
 							<div id="irateChart"></div>
-						</fieldset>
+						</div>
 					</form>
-				</div>
 			</div>
-			<div class="pure-u-1 pure-u-md-1-3">
-				<div class="operation-container">
-					<form method="post" class="pure-form pure-form-aligned">
-						<fieldset class="pure-group">
+			<div class="col-sm-4">
+					<form method="post">
+						<div class="form-group">
 							<legend>Valor Total</legend>
 							<div id="summChart"></div>
-						</fieldset>
+						</div>
 					</form>
-				</div>
 			</div>
 		</div>
-		<div class="pure-g">
-			<div class="pure-u-1 pure-u-md-1-3">
-				<div class="operation-container">
-					<form id="op" action="op" method="post" class="pure-form pure-form-aligned">
-						<fieldset class="pure-group">
-							<legend>Adicionar Operação</legend>
-
-							<select name="type" class="pure-input-1" required>
-								<option value="">Operação</option>
-								<option value="1">Saldo</option>
-								<option value="2">Aporte</option>
-								<option value="3">Retirada</option>
-							</select>
-
-							<select name="inv" class="pure-input-1" required>
-								<option value="">Investimento</option>
-								{{range .Investments}}
-								<option value="{{.Key}}">{{.Name}}</option>
-								{{end}}
-							</select>
-
-							<input id="opvalue" name="value" type="text" size="10" class="pure-input-1" placeholder="Valor" required>
-							<input id="datePicker" name="date" type="text" class="pure-input-1" required>
-
-							<button type="submit" name="action" class="pure-button pure-input-1 pure-button-primary">
-								<i class="fa fa-plus"></i>
-								Adicionar
-							</button>
-						</fieldset>
-					</form>
-				</div>
+		<div class="container-fluid">
+			<div class="col-sm-4">
+				<form action="op" method="post">
+					<legend>Adicionar Operação</legend>
+					<div class="form-group">
+						<select name="type" class="form-control c-select" required>
+							<option value="">Operação</option>
+							<option value="1">Saldo</option>
+							<option value="2">Aporte</option>
+							<option value="3">Retirada</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<select name="inv" class="form-control c-select" required>
+							<option value="">Investimento</option>
+							{{range .Investments}}
+							<option value="{{.Key}}">{{.Name}}</option>
+							{{end}}
+						</select>
+					</div>
+					<div class="form-group">
+						<input id="opvalue" name="value" type="text" size="10" class="form-control" placeholder="Valor" required>
+					</div>
+					<div class="form-group">
+						<input id="datePicker" name="date" type="text" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<button type="submit" name="action" class="btn btn-primary">
+							<i class="fa fa-plus"></i>
+							Adicionar
+						</button>
+					</div>
+				</form>
 			</div>
-
-			<div class="pure-u-1 pure-u-md-1-3">
-				<div class="operation-container">
-					<form action="inv" method="post" class="pure-form pure-form-aligned">
-						<fieldset>
-							<legend>Investimentos</legend>
-							<select name="key" class="pure-input-1">
-								<option value="">Investimento</option>
-								{{range .Investments}}
-								<option value="{{.Key}}">{{.Name}}</option>
-								{{end}}
-							</select>
-							<input name="name" type="text" size="15" class="pure-input-1" placeholder="Nome">
-							<button type="submit" name="action" value="ae" class="pure-button pure-input-1 pure-button-primary">
-								<i class="fa fa-edit"></i>
-								Novo/Editar
-							</button>
-							<button type="submit" name="action" value="d" class="pure-button pure-input-1">
-								<i class="fa fa-trash-o"></i>
-								Remover
-							</button>
-						</fieldset>
-					</form>
-				</div>
+			<div class="col-sm-4">
+				<form action="inv" method="post">
+					<legend>Investimentos</legend>
+					<div class="form-group">
+						<select name="key" class="form-control c-select">
+							<option value="">Investimento</option>
+							{{range .Investments}}
+							<option value="{{.Key}}">{{.Name}}</option>
+							{{end}}
+						</select>
+					</div>
+					<div class="form-group">
+						<input name="name" type="text" size="15" class="form-control" placeholder="Nome">
+					</div>
+					<div class="form-group">
+						<button type="submit" name="action" value="ae" class="col-sm-6 btn btn-primary">
+							<i class="fa fa-edit"></i>
+							Novo/Editar
+						</button>
+						<button type="submit" name="action" value="d" class="col-sm-6 btn btn-secondary">
+							<i class="fa fa-trash-o"></i>
+							Remover
+						</button>
+					</div>
+				</form>
 			</div>
 		</div>
-		<div class="pure-g" id="accordion">
-			<div class="pure-u-1">
+		<div class="container-fluid">
+			<div class="col-sm-8">
 				{{range .Investments}}
 				{{$key := .Key}}
 				<ul class="fa-ul">
@@ -145,11 +136,11 @@ document.write("{{.Date.Format "01/2006"}}: Saldo:" + balance + " :: Aportes-Saq
 								<div id="summaryops_{{$key}}_{{$summId}}">
 									<ul>
 										{{range .SummaryOps}}
-										<form method="post" action="op" class="pure-form">
+										<form method="post" action="op">
 											<input type="hidden" name="inv" value="{{$key}}">
 											<input type="hidden" name="action" value="d">
 											<input type="hidden" name="index" value="{{.Index}}">
-											<button type="submit" class="pure-button" data-toggle="tooltip" data-placement="bottom" title="Remover"><i class="fa fa-trash-o"></i></button>
+											<button type="submit" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Remover"><i class="fa fa-trash-o"></i></button>
 											<script>
 value = formatCurrency({{.Operation.Value}});
 type = operationType("{{.Operation.Type}}");
@@ -168,9 +159,9 @@ document.write("<span>{{.Operation.Date.Format "02/01/2006"}} "+ type +" " + val
 			</div>
 		</div>
 
-		<div class="pure-g">
-			<div class="pure-u-1">
-				<a href={{.LogoutURL}} class="pure-button">
+		<div class="container-fluid">
+			<div class="form-group col-sm-8">
+				<a href={{.LogoutURL}} class="btn btn-secondary">
 					<i class="fa fa-sign-out fa-flip-horizontal"></i>
 					Logout
 				</a>
