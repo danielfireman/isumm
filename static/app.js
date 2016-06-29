@@ -43,7 +43,6 @@ function operationType(type){
         break;
   }
 }
-
 // Plotting charts
 $(document).ready(function() {
   var options = {
