@@ -69,7 +69,7 @@ func NewOperationFromString(t, v, d string) (Operation, error) {
 	if err != nil {
 		return Operation{}, fmt.Errorf("Invalid value: \"%s\"", v)
 	}
-	date, err := time.Parse("2006-01-02", d)
+	date, err := time.Parse("02/01/2006", d)
 	if err != nil {
 		return Operation{}, fmt.Errorf("Invalid operation date: %s", d)
 	}
