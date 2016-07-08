@@ -17,6 +17,10 @@ handlers:
   script: _go_app
   login: required
 
+- url: /app/ops
+  script: _go_app
+  login: required
+
 - url: /inv
   script: _go_app
   login: required

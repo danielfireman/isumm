@@ -1,48 +1,3 @@
-// Loading language.
-// Extracted from github.com/adamwdraper/Numeral-js/blob/master/languages/pt-br.js
-numeral.language('pt-br', {
-  delimiters: {
-    thousands: '.',
-    decimal: ','
-  },
-  abbreviations: {
-    thousand: 'mil',
-    million: 'milhões',
-    billion: 'b',
-    trillion: 't'
-  },
-  ordinal: function (number) {
-    return 'º';
-  },
-  currency: {
-    symbol: 'R$'
-  },
-})
-
-// Setting language and default currency formatter.
-numeral.language('pt-br')
-
-function formatCurrency(n) {
-  return numeral(n.toFixed(2)).format('$ 0.0,00').slice(0, -2)
-}
-
-function formatPercent(n) {
-  return numeral(n.toFixed(2)).format('0.0,00').slice(0, -2) + ' %'
-}
-
-function operationType(type){
-  switch(type) {
-    case "Balance":
-        return "Saldo";
-        break;
-    case "Deposit":
-        return "Aporte";
-        break;
-    case "Withdrawal":
-        return "Retirada";
-        break;
-  }
-}
 // Plotting charts
 $(document).ready(function() {
   var options = {
@@ -90,28 +45,4 @@ $(document).ready(function() {
   }
   irateChartOptions.xaxis = xaxis
   $.plot("#irateChart", interestRateData, irateChartOptions);
-});
-
-// Default value for date-picker.
-$(document).ready(function() {
-	var now = new Date();
-	// The two-digit day and month are needed due to time conversion formatting templates.
-  var today = ('0' + now.getDate()).slice(-2) + '/' + ('0' + (now.getMonth()+1)).slice(-2) + '/' + now.getFullYear();
-  $('#datePicker').val(today);
-});
-
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();
-});
-
-$(document).ready(function(){
-  $('#op').submit(function() {
-    var txt = $('#opvalue');
-    console.log(numeral().unformat(txt.val()))
-    txt.val(numeral().unformat(txt.val()));
-  });
-});
-
-$(function() {
-     $("#datePicker").datepicker({ dateFormat: 'dd/mm/yy'});
 });
