@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>ISummary - Operations</title>
+		<title>ISumm - Operations</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
@@ -25,8 +25,8 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js"></script>
 
 		<!-- Our own JS -->
-		<script type="text/javascript" src="/static/number_format.js"></script>
-		<script type="text/javascript" src="/static/ops.js"></script>
+		<script type="text/javascript" src="/static/js/number_format.js"></script>
+		<script type="text/javascript" src="/static/js/ops.js"></script>
 
 <script type="text/javascript">
 </script>
@@ -112,7 +112,7 @@ document.write("{{.Date.Format "01/2006"}}: Saldo:" + balance + " :: Aportes-Saq
 								<div id="summaryops_{{$key}}_{{$summId}}">
 									<ul>
 										{{range .SummaryOps}}
-										<form method="post" action="op">
+										<form method="post" action="/op">
 											<input type="hidden" name="inv" value="{{$key}}">
 											<input type="hidden" name="action" value="d">
 											<input type="hidden" name="index" value="{{.Index}}">
