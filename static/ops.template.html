@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>ISumm - Summary</title>
+		<title>ISumm - Operations</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
@@ -17,13 +17,8 @@
 		<!-- Our own CSS -->
 		<link rel="stylesheet" href="/static/app.css">
 
-		<!-- Dependencies and code to plot the investment graph -->
-		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/flot.tooltip/0.8.7/jquery.flot.tooltip.min.js"></script>
 
-		<!-- Dependencies to UI -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js"></script>
@@ -31,34 +26,12 @@
 
 		<!-- Our own JS -->
 		<script type="text/javascript" src="/static/js/number_format.js"></script>
-		<script type="text/javascript" src="/static/js/app.js"></script>
 		<script type="text/javascript" src="/static/js/ops.js"></script>
 
 <script type="text/javascript">
-// Global variables to plot the charts
-var amountSummaryData = [[{{range .AmountSummaryChart}}{{.}},{{end}}]];
-var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
 </script>
 	</head>
 	<body>
-		<div class="container-fluid">
-			<div class="col-sm-4">
-					<form method="post">
-						<div class="form-group">
-							<legend>Rentabilidade Mensal</legend>
-							<div id="irateChart"></div>
-						</div>
-					</form>
-			</div>
-			<div class="col-sm-4">
-					<form method="post">
-						<div class="form-group">
-							<legend>Valor Total</legend>
-							<div id="summChart"></div>
-						</div>
-					</form>
-			</div>
-		</div>
 		<div class="container-fluid">
 			<div class="col-sm-4">
 				<form action="/op" method="post">
@@ -121,10 +94,52 @@ var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
 			</div>
 		</div>
 		<div class="container-fluid">
+			<div class="col-sm-8">
+				{{range .Investments}}
+				{{$key := .Key}}
+				<ul class="fa-ul">
+					<li><i class="fa-li fa fa-bank"></i>{{.Name}}</li>
+					<ul class="fa-ul">
+						{{range .Ops.Summarize}}
+						{{$summId := .Date.Format "01_2006"}}
+						<li>
+							<div class="summarySection">
+								<script>
+balance = formatCurrency({{.Balance}});
+change = formatCurrency({{.Change}});
+document.write("{{.Date.Format "01/2006"}}: Saldo:" + balance + " :: Aportes-Saques:" + change);
+								</script>
+								<div id="summaryops_{{$key}}_{{$summId}}">
+									<ul>
+										{{range .SummaryOps}}
+										<form method="post" action="/op">
+											<input type="hidden" name="inv" value="{{$key}}">
+											<input type="hidden" name="action" value="d">
+											<input type="hidden" name="index" value="{{.Index}}">
+											<button type="submit" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Remover"><i class="fa fa-trash-o"></i></button>
+											<script>								
+value = formatCurrency({{.Operation.Value}});
+type = operationType("{{.Operation.Type}}");
+document.write("<span>{{.Operation.Date.Format "02/01/2006"}} "+ type +" " + value + "</span>");
+											</script>
+										</form>
+										{{end}}
+									</ul>
+								</div>
+							</div>
+						</li>
+						{{end}}
+					</ul>
+				</ul>
+				{{end}}
+			</div>
+		</div>
+
+		<div class="container-fluid">
 			<div class="form-group col-sm-8">
-				<a href="/app/ops" class="btn btn-secondary">
+				<a href="/app" class="btn btn-secondary">
 					<i class="fa fa-bank"></i>
-					Operações
+					Resumo ISumm
 				</a>
 				<a href={{.LogoutURL}} class="btn btn-secondary">
 					<i class="fa fa-sign-out fa-flip-horizontal"></i>
