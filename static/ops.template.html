@@ -15,8 +15,8 @@
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
 		<!-- Our own CSS -->
-		<link rel="stylesheet" href="/static/app.css">
-
+		<link rel="stylesheet" href="/static/css/app.css">
+		<link rel="stylesheet" href="/static/css/simple-sidebar.css">
 
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -27,125 +27,143 @@
 		<!-- Our own JS -->
 		<script type="text/javascript" src="/static/js/number_format.js"></script>
 		<script type="text/javascript" src="/static/js/ops.js"></script>
-
-<script type="text/javascript">
-</script>
 	</head>
 	<body>
-		<div class="container-fluid">
-			<div class="col-sm-4">
-				<form action="/op" method="post">
-					<legend>Adicionar Operação</legend>
-					<div class="form-group">
-						<select name="type" class="form-control c-select" required>
-							<option value="">Operação</option>
-							<option value="1">Saldo</option>
-							<option value="2">Aporte</option>
-							<option value="3">Retirada</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<select name="inv" class="form-control c-select" required>
-							<option value="">Investimento</option>
-							{{range .Investments}}
-							<option value="{{.Key}}">{{.Name}}</option>
-							{{end}}
-						</select>
-					</div>
-					<div class="form-group">
-						<input id="opvalue" name="value" type="text" size="10" class="form-control" placeholder="Valor" required>
-					</div>
-					<div class="form-group">
-						<input id="datePicker" name="date" type="text" class="form-control" required>
-					</div>
-					<div class="form-group">
-						<button type="submit" name="action" class="btn btn-primary">
-							<i class="fa fa-plus"></i>
-							Adicionar
-						</button>
-					</div>
-				</form>
-			</div>
-			<div class="col-sm-4">
-				<form action="/inv" method="post">
-					<legend>Investimentos</legend>
-					<div class="form-group">
-						<select name="key" class="form-control c-select">
-							<option value="">Investimento</option>
-							{{range .Investments}}
-							<option value="{{.Key}}">{{.Name}}</option>
-							{{end}}
-						</select>
-					</div>
-					<div class="form-group">
-						<input name="name" type="text" size="15" class="form-control" placeholder="Nome">
-					</div>
-					<div class="form-group">
-						<button type="submit" name="action" value="ae" class="col-sm-6 btn btn-primary">
-							<i class="fa fa-edit"></i>
-							Novo/Editar
-						</button>
-						<button type="submit" name="action" value="d" class="col-sm-6 btn btn-secondary">
-							<i class="fa fa-trash-o"></i>
-							Remover
-						</button>
-					</div>
-				</form>
-			</div>
-		</div>
-		<div class="container-fluid">
-			<div class="col-sm-8">
-				{{range .Investments}}
-				{{$key := .Key}}
-				<ul class="fa-ul">
-					<li><i class="fa-li fa fa-bank"></i>{{.Name}}</li>
-					<ul class="fa-ul">
-						{{range .Ops.Summarize}}
-						{{$summId := .Date.Format "01_2006"}}
+		<div id="wrapper">
+			<!-- Sidebar -->
+			<div id="sidebar-wrapper">
+				<nav id="spy">
+					<ul class="sidebar-nav nav">
+						<li class="sidebar-brand">
+							<a href="#">ISumm</a>
+						</li>
 						<li>
-							<div class="summarySection">
-								<script>
+							<a href="/app" data-scroll>Relatórios<i class="fa fa-line-chart"></i></a>
+						</li>
+						<li>
+							<a href="/app/ops" data-scroll>Operações<i class="fa fa-edit"></i></a>
+						</li>
+						<li>
+							<a href={{.LogoutURL}} data-scroll>Logout<i class="fa fa-sign-out"></i></a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+			<div id="page-content-wrapper">
+				<div class="content-header">
+					<h1 id="home">
+						<a id="menu-toggle" href="#" class="btn-menu toggle">
+							<i class="fa fa-bars"></i>
+						</a>
+						ISumm
+					</h1>
+				</div>
+				<div class="page-content inset" data-spy="scroll" data-target="#spy">
+					<div class="container-fluid">
+						<div class="col-sm-4">
+							<form action="/op" method="post">
+							<legend>Adicionar Operação</legend>
+							<div class="form-group">
+								<select name="type" class="form-control c-select" required>
+									<option value="">Operação</option>
+									<option value="1">Saldo</option>
+									<option value="2">Aporte</option>
+									<option value="3">Retirada</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<select name="inv" class="form-control c-select" required>
+									<option value="">Investimento</option>
+									{{range .Investments}}
+									<option value="{{.Key}}">{{.Name}}</option>
+									{{end}}
+								</select>
+							</div>
+							<div class="form-group">
+								<input id="opvalue" name="value" type="text" size="10" class="form-control" placeholder="Valor" required>
+							</div>
+							<div class="form-group">
+								<input id="datePicker" name="date" type="text" class="form-control" required>
+							</div>
+							<div class="form-group">
+								<button type="submit" name="action" class="btn btn-primary">
+									<i class="fa fa-plus"></i>
+									Adicionar
+								</button>
+							</div>
+						</form>
+						</div>
+						<div class="col-sm-4">
+							<form action="/inv" method="post">
+							<legend>Investimentos</legend>
+							<div class="form-group">
+								<select name="key" class="form-control c-select">
+									<option value="">Investimento</option>
+									{{range .Investments}}
+									<option value="{{.Key}}">{{.Name}}</option>
+									{{end}}
+								</select>
+							</div>
+							<div class="form-group">
+								<input name="name" type="text" size="15" class="form-control" placeholder="Nome">
+							</div>
+							<div class="form-group">
+								<button type="submit" name="action" value="ae" class="col-sm-6 btn btn-primary">
+									<i class="fa fa-edit"></i>
+									Novo/Editar
+								</button>
+								<button type="submit" name="action" value="d" class="col-sm-6 btn btn-secondary">
+									<i class="fa fa-trash-o"></i>
+									Remover
+								</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+					<div class="container-fluid">
+						<div class="col-sm-8">
+							{{range .Investments}}
+							{{$key := .Key}}
+							<ul class="fa-ul">
+								<li><i class="fa-li fa fa-bank"></i>{{.Name}}</li>
+								<ul class="fa-ul">
+									{{range .Ops.Summarize}}
+									{{$summId := .Date.Format "01_2006"}}
+									<li>
+										<div class="summarySection">
+											<script>
 balance = formatCurrency({{.Balance}});
 change = formatCurrency({{.Change}});
 document.write("{{.Date.Format "01/2006"}}: Saldo:" + balance + " :: Aportes-Saques:" + change);
-								</script>
-								<div id="summaryops_{{$key}}_{{$summId}}">
-									<ul>
-										{{range .SummaryOps}}
-										<form method="post" action="/op">
-											<input type="hidden" name="inv" value="{{$key}}">
-											<input type="hidden" name="action" value="d">
-											<input type="hidden" name="index" value="{{.Index}}">
-											<button type="submit" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Remover"><i class="fa fa-trash-o"></i></button>
-											<script>								
+											</script>
+											<div id="summaryops_{{$key}}_{{$summId}}">
+												<ul>
+													{{range .SummaryOps}}
+													<form method="post" action="/op">
+														<input type="hidden" name="inv" value="{{$key}}">
+														<input type="hidden" name="action" value="d">
+														<input type="hidden" name="index" value="{{.Index}}">
+														<button type="submit" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Remover"><i class="fa fa-trash-o"></i></button>
+														<script>
 value = formatCurrency({{.Operation.Value}});
 type = operationType("{{.Operation.Type}}");
 document.write("<span>{{.Operation.Date.Format "02/01/2006"}} "+ type +" " + value + "</span>");
-											</script>
-										</form>
-										{{end}}
-									</ul>
-								</div>
-							</div>
-						</li>
-						{{end}}
-					</ul>
-				</ul>
-				{{end}}
+														</script>
+													</form>
+													{{end}}
+												</ul>
+											</div>
+										</div>
+									</li>
+									{{end}}
+								</ul>
+							</ul>
+							{{end}}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
-
-		<div class="container-fluid">
-			<div class="form-group col-sm-8">
-				<a href="/app" class="btn btn-secondary">
-					<i class="fa fa-bank"></i>
-					Resumo ISumm
-				</a>
-				<a href={{.LogoutURL}} class="btn btn-secondary">
-					<i class="fa fa-sign-out fa-flip-horizontal"></i>
-					Logout
-				</a>
-			</div>
-		</div>
+		<script type="text/javascript" src="/static/js/sidebar.js"></script>
 	</body>
 </html>
