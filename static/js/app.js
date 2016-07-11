@@ -46,3 +46,29 @@ $(document).ready(function() {
   irateChartOptions.xaxis = xaxis
   $.plot("#irateChart", interestRateData, irateChartOptions);
 });
+
+/**
+  Typeahead function - This function enables the typeahead input
+  and writes the investment id in #hiddenInputElement to form submit
+**/
+$(document).ready(function(){
+  $('#investment-field .typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'investments',
+    source: function (query, process) {
+      listInv = [];
+      map = {};
+      $.each(investments, function (i, inv) {
+          map[inv.name] = inv.id;
+          listInv.push(inv.name);
+      });
+      process(listInv);
+    }
+  }).on('typeahead:select', function(ev, suggestion) {
+    $('#hiddenInputElement').val(investments[listInv.indexOf(suggestion)].id);
+  });
+});
