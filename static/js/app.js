@@ -48,6 +48,32 @@ $(document).ready(function() {
 });
 
 /**
+  Matcher function - This function search to the match between what the user
+  typed and the invName at the investments Object.
+**/
+var substringMatcher = function(strs) {
+  return function findMatches(q, cb) {
+    var matches, substringRegex;
+
+    // an array that will be populated with substring matches
+    matches = [];
+
+    // regex used to determine if a string contains the substring `q`
+    substringRegex = new RegExp(q, 'i');
+
+    // iterate through the pool of strings and for any string that
+    // contains the substring `q`, add it to the `matches` array
+    $.each(strs, function(i, str) {
+      if (substringRegex.test(str.invName)) {
+        matches.push(str.invName);
+      }
+    });
+
+    cb(matches);
+  };
+};
+
+/**
   Typeahead function - This function enables the typeahead input
   and writes the investment id in #hiddenInputElement to form submit
 **/
@@ -59,16 +85,12 @@ $(document).ready(function(){
   },
   {
     name: 'investments',
-    source: function (query, process) {
-      listInv = [];
-      map = {};
-      $.each(investments, function (i, inv) {
-          map[inv.name] = inv.id;
-          listInv.push(inv.name);
-      });
-      process(listInv);
-    }
+    source: substringMatcher(investments)
   }).on('typeahead:select', function(ev, suggestion) {
-    $('#hiddenInputElement').val(investments[listInv.indexOf(suggestion)].id);
+      listInv = [];
+      $.each(investments, function (i, investment) {
+        listInv.push(investment.invName);
+      });
+    $('#hiddenInputElement').val(investments[listInv.indexOf(suggestion)].invCode);
   });
 });
