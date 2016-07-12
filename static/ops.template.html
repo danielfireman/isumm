@@ -16,6 +16,7 @@
 
 		<!-- Our own CSS -->
 		<link rel="stylesheet" href="/static/css/app.css">
+		<link rel="stylesheet" href="/static/css/typeahead.css">
 		<link rel="stylesheet" href="/static/css/simple-sidebar.css">
 
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -23,16 +24,19 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
 		<!-- Our own JS -->
 		<script type="text/javascript" src="/static/js/number_format.js"></script>
 		<script type="text/javascript" src="/static/js/ops.js"></script>
+		<script type="text/javascript" src="/static/js/typeahead.js"></script>
+
+<script type="text/javascript">
+// Transform object engine to a JSON
+var investments = [{{range .Investments}},{"invCode":"{{.Key}}","invName":"{{.Name}}"}{{end}}];
+investments.shift();
+</script>
 	</head>
-	<script type="text/javascript">
-	// Transform object engine to a JSON
-	var investments = [{{range .Investments}},{"invCode":"{{.Key}}","invName":"{{.Name}}"}{{end}}];
-	investments.shift();
-	</script>
 	<body>
 		<div id="wrapper">
 			<!-- Sidebar -->

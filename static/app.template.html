@@ -38,6 +38,7 @@
 		<script type="text/javascript" src="/static/js/number_format.js"></script>
 		<script type="text/javascript" src="/static/js/app.js"></script>
 		<script type="text/javascript" src="/static/js/ops.js"></script>
+		<script type="text/javascript" src="/static/js/typeahead.js"></script>
 
 <script type="text/javascript">
 // Global variables to plot the charts
@@ -46,7 +47,6 @@ var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
 // Transform object engine to a JSON
 var investments = [{{range .Investments}},{"invCode":"{{.Key}}","invName":"{{.Name}}"}{{end}}];
 investments.shift();
-
 </script>
 	</head>
 	<body>
