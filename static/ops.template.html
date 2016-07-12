@@ -35,6 +35,9 @@
 // Transform object engine to a JSON
 var investments = [{{range .Investments}},{"invCode":"{{.Key}}","invName":"{{.Name}}"}{{end}}];
 investments.shift();
+$(document).ready(function(){
+  return typeaheadWrapper(investments, "investment-field", "hiddenInputElement")();
+});
 </script>
 	</head>
 	<body>

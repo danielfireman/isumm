@@ -1,29 +1,8 @@
 /**
-  Typeahead function - This function enables the typeahead input
-  and writes the investment id in #hiddenInputElement to form submit
-**/
-$(document).ready(function(){
-  $('#investment-field .typeahead').typeahead({
-    hint: true,
-    highlight: true,
-    minLength: 1
-  },
-  {
-    name: 'investments',
-    source: substringMatcher(investments)
-  }).on('typeahead:select', function(ev, suggestion) {
-      listInv = [];
-      $.each(investments, function (i, investment) {
-        listInv.push(investment.invName);
-      });
-    $('#hiddenInputElement').val(investments[listInv.indexOf(suggestion)].invCode);
-  });
-});
-
-/**
-  Matcher function - This function search to the match between what the user
-  typed and the invName at the investments Object.
-**/
+ *  Matcher function - This function search to the match between what the user
+ *  typed and the invName at the investments Object.
+ *  @param {Object[]} strs -  array of objects to be matched
+ */
 var substringMatcher = function(strs) {
   return function findMatches(q, cb) {
     var matches, substringRegex;
@@ -45,3 +24,31 @@ var substringMatcher = function(strs) {
     cb(matches);
   };
 };
+
+/**
+ *  Typeahead function - This function enables the typeahead input
+ *  and writes the investment id in #hiddenInputElement to form submit
+ *  @param {Object[]} invs - The investments list
+ *  @param {string} invField - id of investment text field div
+ *  @param {string} invHiddenField - id of hidden investment text field
+ */
+var typeaheadWrapper = (function(invs, invField, invHiddenField) {
+  return function() {
+     $('#' + invField + ' .typeahead').typeahead({
+      hint: true,
+      highlight: true,
+      minLength: 1
+    },
+    {
+      name: 'investments',
+      source: substringMatcher(invs)
+    }).on('typeahead:select', function(ev, suggestion) {
+        listInv = [];
+        $.each(invs, function (i, investment) {
+          listInv.push(investment.invName);
+        });
+      $('#' + invHiddenField).val(invs[listInv.indexOf(suggestion)].invCode);
+    });
+    console.log(invs);
+  }
+});
