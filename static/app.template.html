@@ -14,6 +14,9 @@
 		<!-- Font Awesome -->
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
+		<!-- Twitter typeahead CSS -->
+		<link rel="stylesheet" href="/static/css/typeahead.css">
+
 		<!-- Our own CSS -->
 		<link rel="stylesheet" href="/static/css/app.css">
 		<link rel="stylesheet" href="/static/css/simple-sidebar.css">
@@ -29,16 +32,24 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
 		<!-- Our own JS -->
 		<script type="text/javascript" src="/static/js/number_format.js"></script>
 		<script type="text/javascript" src="/static/js/app.js"></script>
 		<script type="text/javascript" src="/static/js/ops.js"></script>
+		<script type="text/javascript" src="/static/js/typeahead.js"></script>
 
 <script type="text/javascript">
 // Global variables to plot the charts
 var amountSummaryData = [[{{range .AmountSummaryChart}}{{.}},{{end}}]];
 var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
+// Transform object engine to a JSON
+var investments = [{{range .Investments}},{"invCode":"{{.Key}}","invName":"{{.Name}}"}{{end}}];
+investments.shift();
+$(document).ready(function(){
+  return typeaheadWrapper(investments, "investment-field", "hiddenInputElement")();
+});
 </script>
 	</head>
 	<body>
@@ -103,12 +114,11 @@ var interestRateData = [[{{range .InterestRateChart}}{{.}},{{end}}]];
 									</select>
 								</div>
 								<div class="form-group">
-									<select name="inv" class="form-control c-select" required>
-										<option value="">Investimento</option>
-										{{range .Investments}}
-										<option value="{{.Key}}">{{.Name}}</option>
-										{{end}}
-									</select>
+									<div id="investment-field">
+										<input class="form-control typeahead" type="text" placeholder="Investimentos">
+										<!-- this input will be submit with the investment id -->
+										<input id="hiddenInputElement" name="inv" type="hidden" value="">
+									</div>
 								</div>
 								<div class="form-group">
 									<input id="opvalue" name="value" type="text" size="10" class="form-control" placeholder="Valor" required>
