@@ -6,10 +6,10 @@ numeral.language('pt-br', {
     decimal: ','
   },
   abbreviations: {
-    thousand: 'mil',
-    million: 'milhões',
-    billion: 'b',
-    trillion: 't'
+    thousand: 'K',
+    million: 'M',
+    billion: 'B',
+    trillion: 'T'
   },
   ordinal: function (number) {
     return 'º';
@@ -23,9 +23,13 @@ numeral.language('pt-br', {
 numeral.language('pt-br')
 
 function formatCurrency(n) {
-  return numeral(n.toFixed(2)).format('$ 0.0,00').slice(0, -2)
+  return numeral(n.toFixed(2)).format('0.00a')
 }
 
 function formatPercent(n) {
-  return numeral(n.toFixed(2)).format('0.0,00').slice(0, -2) + ' %'
+  return numeral(n.toFixed(2)).format('0.0,00').slice(0, -2)
+}
+
+function formatCurrencyFull(n) {
+  return numeral(n.toFixed(2)).format('0.00,00').slice(0, -3)
 }

@@ -49,6 +49,5 @@ var typeaheadWrapper = (function(invs, invField, invHiddenField) {
         });
       $('#' + invHiddenField).val(invs[listInv.indexOf(suggestion)].invCode);
     });
-    console.log(invs);
   }
 });
