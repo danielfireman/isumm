@@ -33,5 +33,5 @@ $(document).ready(function(){
 });
 
 $(function() {
-     $("#datePicker").datepicker({ dateFormat: 'dd/mm/yy'});
+     $("#datePicker").datetimepicker({locale: 'pt-br', format: 'DD/MM/YYYY'});
 });
