@@ -50,10 +50,10 @@ $(document).ready(function(){
 							<a href="#">ISumm</a>
 						</li>
 						<li>
-							<a href="/app" data-scroll>Relatórios<i class="fa fa-line-chart"></i></a>
+							<a href="/app" data-scroll>Resumo<i class="fa fa-line-chart"></i></a>
 						</li>
 						<li>
-							<a href="/app/ops" data-scroll>Operações<i class="fa fa-edit"></i></a>
+							<a href="/app/ops" data-scroll>Operações<i class="fa fa-bank"></i></a>
 						</li>
 						<li>
 							<a href={{.LogoutURL}} data-scroll>Logout<i class="fa fa-sign-out"></i></a>
@@ -72,7 +72,7 @@ $(document).ready(function(){
 				</div>
 				<div class="page-content inset" data-spy="scroll" data-target="#spy">
 					<div class="container-fluid">
-						<div class="col-sm-4">
+						<div class="col-sm-6">
 							<form action="/op" method="post">
 							<legend>Adicionar Operação</legend>
 							<div class="form-group">
@@ -104,7 +104,7 @@ $(document).ready(function(){
 							</div>
 						</form>
 						</div>
-						<div class="col-sm-4">
+						<div class="col-sm-6">
 							<form action="/inv" method="post">
 							<legend>Investimentos</legend>
 							<div class="form-group">
@@ -132,7 +132,7 @@ $(document).ready(function(){
 					  </div>
 					</div>
 					<div class="container-fluid">
-						<div class="col-sm-8">
+						<div class="col-sm-12">
 							{{range .Investments}}
 							{{$key := .Key}}
 							<ul class="fa-ul">

@@ -21,10 +21,9 @@ $(document).ready(function() {
     timeformat: "%m/%Y",
     ticks: function(axis){
       genAxis = axis.tickGenerator(axis);
-      if (genAxis.length > 5) {
+      if (genAxis.length > 2) {
           var midIndex = ~~(genAxis.length/2)
-          var half = ~~(midIndex/2)
-          return [genAxis[0], genAxis[midIndex-half], genAxis[midIndex], genAxis[midIndex+half], genAxis[genAxis.length-1]]
+          return [genAxis[0], genAxis[midIndex], genAxis[genAxis.length-1]]
       }
       return genAxis
     },
@@ -34,6 +33,11 @@ $(document).ready(function() {
   aSummaryOptions.yaxis =  {
     tickFormatter: formatCurrency,
     axisLabel: "Valor Total (R$)",
+  }
+  aSummaryOptions.tooltipOpts = {
+    content: function(label, xval, yval, flotItem){
+        return $.plot.formatDate(new Date(xval), "%m/%Y") + ": " + formatCurrencyFull(yval)
+    }
   }
   aSummaryOptions.xaxis = xaxis
   $.plot("#summChart", amountSummaryData, aSummaryOptions);
